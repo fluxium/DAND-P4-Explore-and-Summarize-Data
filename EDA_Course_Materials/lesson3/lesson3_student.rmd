@@ -5,68 +5,93 @@ Lesson 3
 
 ### What to Do First?
 Notes:
-
+EDA is an opportunity to let the data surprise you
+First understand the variables that are central to the questions you are looking to answer from your data
 ***
 
 ### Pseudo-Facebook User Data
 Notes:
 
 ```{r Pseudo-Facebook User Data}
-
+# Make sure you are in the correct directory
+# getwd()
+# files.names()
+fbdf <- read.csv("pseudo_facebook.tsv", sep = "\t")
+names(fbdf)
 ```
 
 ***
 
 ### Histogram of Users' Birthdays
 Notes:
-
+ggplot is simpler and more intuitive to use than the native R graphics package. It provides some intelligent features liks legend generation and labeling
 ```{r Histogram of Users\' Birthdays}
 install.packages('ggplot2')
 library(ggplot2)
+
+install.packages('ggthemes', dependencies = TRUE) 
+library(ggthemes)
+
+theme_set(theme_minimal(18))
+
+qplot(x = dob_day, data = fbdf) +
+  scale_x_continuous(breaks=1:31)
+
+ggplot(aes(x = dob_day), data = fbdf) + 
+  geom_bar() + 
+  scale_x_continuous(breaks = 1:31)
 ```
 
 ***
 
 #### What are some things that you notice about this histogram?
 Response:
-
+Large bin on the first day
 ***
 
 ### Moira's Investigation
 Notes:
-
+Wanted to study how people perceive their audience versus who is actually seeing the content they are producing on FB. Many people over estimate their audience. Did a survey where a user was directed to a recent post and was asked how many freinds saw it.
 ***
 
 ### Estimating Your Audience Size
 Notes:
-
+Post about person whistling in the kitchen by my office, guess about 10 people saw it, 7% of my friends
 ***
 
 #### Think about a time when you posted a specific message or shared a photo on Facebook. What was it?
 Response:
+Post about person whistling in the kitchen by my office
 
 #### How many of your friends do you think saw that post?
 Response:
-
+10
 #### Think about what percent of your friends on Facebook see any posts or comments that you make in a month. What percent do you think that is?
 Response:
-
+7%
 ***
 
 ### Perceived Audience Size
 Notes:
-
+Many people think their audience is about 25% of their friends
 ***
 ### Faceting
 Notes:
 
 ```{r Faceting}
+qplot(x = dob_day, data = fbdf) +
+  scale_x_continuous(breaks = 1:31) +
+  facet_wrap(~dob_day, ncol = 3)
 
+ggplot(data = fbdf, aes(x = dob_day)) + 
+  geom_histogram() + 
+  scale_x_continuous(breaks = 1:31) + 
+  facet_wrap(~dob_month)
 ```
 
 #### Let’s take another look at our plot. What stands out to you here?
 Response:
-
+Jan 1
 ***
 
 ### Be Skeptical - Outliers and Anomalies
@@ -78,7 +103,7 @@ Notes:
 Notes:
 #### Which case do you think applies to Moira’s outlier?
 Response:
-
+Bad data about an extreme case
 ***
 
 ### Friend Count
@@ -87,24 +112,29 @@ Notes:
 #### What code would you enter to create a histogram of friend counts?
 
 ```{r Friend Count}
-
+names(fbdf)
+qplot(x = friend_count, data = fbdf)
 ```
 
 #### How is this plot similar to Moira's first plot?
 Response:
-
+The histogram is positivly skewed with small bins at very high values creating a long tail
 ***
 
 ### Limiting the Axes
 Notes:
 
 ```{r Limiting the Axes}
+qplot(x = friend_count, data = fbdf, xlim = c(0,1000))
 
+qplot(x = friend_count, data = fbdf) +
+  scale_x_continuous(limits = c(0,1000))
 ```
 
 ### Exploring with Bin Width
 Notes:
-
+Moira set her binwidth to 1 because most people reponded with whole numbers
+like 10, 50
 ***
 
 ### Adjusting the Bin Width
@@ -114,9 +144,10 @@ Notes:
 ```{r Faceting Friend Count}
 # What code would you add to create a facet the histogram by gender?
 # Add it to the code below.
-qplot(x = friend_count, data = pf, binwidth = 10) +
+qplot(x = friend_count, data = fbdf, binwidth = 25) +
   scale_x_continuous(limits = c(0, 1000),
-                     breaks = seq(0, 1000, 50))
+                     breaks = seq(0, 1000, 50)) +
+  facet_wrap(~gender)
 ```
 
 ***
@@ -125,7 +156,11 @@ qplot(x = friend_count, data = pf, binwidth = 10) +
 Notes:
 
 ```{r Omitting NA Values}
-
+qplot(x = friend_count, data = subset(fbdf, !is.na(gender)), 
+      binwidth = 25) +
+  scale_x_continuous(limits = c(0, 1000),
+                     breaks = seq(0, 1000, 50)) +
+  facet_wrap(~gender)
 ```
 
 ***
@@ -134,25 +169,31 @@ Notes:
 Notes:
 
 ```{r Statistics \'by\' Gender}
-
+table(fbdf$gender)
+by(fbdf$friend_count, fbdf$gender, summary)
 ```
 
 #### Who on average has more friends: men or women?
 Response:
-
+Women
 #### What's the difference between the median friend count for women and men?
 Response:
-
+22
 #### Why would the median be a better measure than the mean?
 Response:
-
+Median is more robust. Men have more observations so using the most common value as a comparison makes more sense. Because the data is long tailed the mean will tend to become skewed. Median marks that halfway point in all our data points as long as we trust half our values we can report a reliable location of the of the center of our distribution
 ***
 
 ### Tenure
 Notes:
 
 ```{r Tenure}
+# I() tells R to use the values as is without interpretation
+# Not working 
+qplot(x = tenure, data = fbdf, color = I('black'), fill('#099DD9'))
 
+ggplot(aes(x = tenure), data = fbdf) + 
+   geom_histogram(binwidth = 30, color = 'black', fill = '#099DD9')
 ```
 
 ***
@@ -160,7 +201,9 @@ Notes:
 #### How would you create a histogram of tenure by year?
 
 ```{r Tenure Histogram by Year}
-
+ggplot(aes(x = tenure/365), data = fbdf) + 
+   geom_histogram(binwidth = 0.25,color = 'black', fill = '#099DD9') +
+  scale_x_continuous(breaks = 1:7)
 ```
 
 ***
@@ -169,7 +212,12 @@ Notes:
 Notes:
 
 ```{r Labeling Plots}
-
+# seq can just be 1:7
+ggplot(aes(x = tenure / 365), data = fbdf) + 
+  geom_histogram(color = 'black', fill = '#F79420') + 
+  scale_x_continuous(breaks = seq(1, 7, 1), limits = c(0, 7)) + 
+  xlab('Number of years using Facebook') + 
+  ylab('Number of users in sample')
 ```
 
 ***
@@ -178,34 +226,60 @@ Notes:
 Notes:
 
 ```{r User Ages}
-
+names(fbdf)
+ggplot(aes(x = age), data = fbdf) + 
+  geom_histogram(binwidth = 1, color = 'black', fill = '#F79420') + 
+  scale_x_continuous(breaks = seq(1, 130, 5)) + 
+  xlab('Age') + 
+  ylab('Number of users in sample')
 ```
 
 #### What do you notice?
 Response:
-
+There are far more centenarians than expected. Could be because of the age being calculated from a default birth date value
 ***
 
 ### The Spread of Memes
 Notes:
-
+Information flowing through a network. Memes have a cyclical repition. The sent to experience regular resurgence.
 ***
 
 ### Lada's Money Bag Meme
 Notes:
-
+Five Fridays, Saturdays, Sundays
+Initial graph with normal y scaling indicated that interest in this meme went to zero then experience regular intense spikes. When Y was scaled log it could be seen that interest in this meme was not zero but some low value like 10
 ***
 
 ### Transforming Data
 Notes:
-
+Sometimes to get a deeper understanding of the variable it helps to view it with different scales like log10 or sqrt
 ***
 
 ### Add a Scaling Layer
 Notes:
 
 ```{r Add a Scaling Layer}
+install.packages("gridExtra", dependencies = T)
+library(gridExtra)
 
+p1 = qplot(x = friend_count, data = fbdf)
+p2 = qplot(x = friend_count + 1, data = fbdf) + scale_x_log10()
+p3 = qplot(x = friend_count, data = fbdf) + scale_x_sqrt()
+  
+grid.arrange(p1, p2, p3, ncol=1)
+
+p1 = qplot(x = friend_count, data = fbdf)
+p2 = qplot(x = log10(friend_count + 1), data = fbdf)
+p3 = qplot(x = sqrt(friend_count), data = fbdf)
+  
+grid.arrange(p1, p2, p3, ncol=1)
+
+p1 = ggplot(aes(x = friend_count), data = fbdf) + geom_histogram()
+p2 = p1 + scale_x_log10()
+p3 = p1 + scale_x_sqrt()
+  
+grid.arrange(p1, p2, p3, ncol=1)
+  
 ```
 
 ***
