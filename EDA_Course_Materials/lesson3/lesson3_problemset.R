@@ -5,6 +5,8 @@ str(diamonds)
 ?diamonds
 levels(diamonds$color)
 
+library(ggplot2)
+
 qplot(x = price, data = diamonds)
 summary(diamonds$price)
 
@@ -85,3 +87,40 @@ qplot(x = color, y = price, data = diamonds, geom = 'boxplot') +
   scale_y_log10()
 
 by(diamonds$price, diamonds$color, summary)
+
+by(diamonds$price / diamonds$carat, diamonds$color, summary)
+
+qplot(x = color, y = price / carat, data = diamonds, geom = 'boxplot') +
+  coord_cartesian()
+
+qplot(x = color, y = price / carat, data = diamonds, geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 7500))
+ggsave('price_per_carat_by_color.png')
+
+qplot(x = color, y = price / carat, data = diamonds, geom = 'boxplot') +
+  coord_cartesian() +
+  scale_y_log10()
+
+qplot(x = color, y = log10(price / carat), data = diamonds, geom = 'boxplot') +
+  coord_cartesian()
+
+str(fbdf$carat)
+
+summary(diamonds$carat)
+
+by(diamonds$carat, diamonds$color, summary)
+
+qplot(x = color, y = carat, data = diamonds, geom = 'boxplot') +
+  coord_cartesian()
+ggsave('carat_by_color.png')
+
+qplot(x = carat, data = diamonds, 
+      binwidth = 0.01, geom = 'freqpoly')
+
+qplot(x = carat, data = diamonds, binwidth = 0.01)
+
+install.packages('tidyr')
+library('tidyr')
+library(dplyr)
+
+  

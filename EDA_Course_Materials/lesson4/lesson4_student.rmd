@@ -12,21 +12,25 @@ Notes:
 Notes:
 
 ```{r Scatterplots}
-
+pf <- read.delim('../datasets/pseudo_facebook.tsv')
+pf
+qplot(x = age, y = friend_count, data = pf)
 ```
 
 ***
 
 #### What are some things that you notice right away?
 Response:
-
+Younger users tend to have more friends. There are more younger users. There are some very distinct vertical bands at some ages > 60.
 ***
 
 ### ggplot Syntax
 Notes:
 
 ```{r ggplot Syntax}
-
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point() +
+  xlim(13, 90)
 ```
 
 ***
@@ -35,7 +39,13 @@ Notes:
 Notes:
 
 ```{r Overplotting}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20) +
+  xlim(13, 90)
 
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_jitter(alpha = 1/20) +
+  xlim(13, 90)
 ```
 
 #### What do you notice in the plot?
@@ -47,7 +57,11 @@ Response:
 Notes:
 
 ```{r Coord_trans()}
-
+?coord_trans
+ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(friend_count || age))) +
+  geom_jitter(alpha = 1/20) +
+  xlim(13, 90) +
+  coord_trans(y = "sqrt", x = "sqrt")
 ```
 
 #### Look up the documentation for coord_trans() and add a layer to the plot that transforms friend_count using the square root function. Create your plot!
