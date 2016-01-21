@@ -57,17 +57,26 @@ Response:
 Notes:
 
 ```{r Coord_trans()}
-?coord_trans
-ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(friend_count || age))) +
+
+ggplot(aes(x = age, y = friend_count), data = subset(pf, friend_count > 0 || age > 0)) +
   geom_jitter(alpha = 1/20) +
-  xlim(13, 90) +
-  coord_trans(y = "sqrt", x = "sqrt")
+  xlim(13, 90)
 ```
 
 #### Look up the documentation for coord_trans() and add a layer to the plot that transforms friend_count using the square root function. Create your plot!
 
 ```{r}
+# geom_jitter() introduces noise (+ and -) that could create values that would be imaginary when passed to sqrt
+?coord_trans
+ggplot(aes(x = age, y = friend_count), data = subset(pf, friend_count > 0 || age > 0)) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(13, 90) +
+  coord_trans(y = "sqrt")
 
+ggplot(aes(x = age, y = friend_count), data = subset(pf, friend_count > 0 || age > 0)) +
+  geom_point(alpha = 1/20) +
+  xlim(13, 90) +
+  coord_trans(y = "sqrt")
 ```
 
 #### What do you notice?
@@ -78,7 +87,10 @@ ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(friend_count || 
 Notes:
 
 ```{r Alpha and Jitter}
-
+ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
+  scale_x_continuous(limits = c(13,90), breaks = seq(13, 90, 2)) +
+  coord_trans(y = "sqrt")
 ```
 
 ***
@@ -92,13 +104,24 @@ Notes:
 Notes:
 
 ```{r Conditional Means}
+library(dplyr)
 
+pf.fc_by_age <- group_by(pf, age) %>%
+                summarise(friend_count_mean = mean(friend_count),
+                          friend_count_median = median(friend_count),
+                          n = n()) %>% 
+                arrange(age)
+head(pf.fc_by_age)
 ```
 
 Create your plot!
 
 ```{r Conditional Means Plot}
+ggplot(aes(y = friend_count_mean, x = age), data = pf.fc_by_age) +
+  geom_line()
 
+ggplot(aes(y = friend_count_median, x = age), data = pf.fc_by_age) +
+  geom_line()
 ```
 
 ***
@@ -107,11 +130,31 @@ Create your plot!
 Notes:
 
 ```{r Overlaying Summaries with Raw Data}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20, 
+             position = position_jitter(h = 0), 
+             color = 'orange') +
+  
+  geom_line(stat = "summary", fun.y = mean) +
+  geom_line(stat = "summary", fun.y = quantile, 
+            fun.args = list(probs = 0.1),
+            linetype = 2, color = 'blue') +
+  geom_line(stat = "summary", fun.y = quantile, 
+            fun.args = list(probs = 0.5),
+            linetype = 2, color = 'blue') +
+  geom_line(stat = "summary", fun.y = quantile, 
+            fun.args = list(probs = 0.9),
+            linetype = 2, color = 'blue') +
+  coord_cartesian(xlim = c(13,70), ylim = c(0, 1000) )
 
+#coord_trans(y = "sqrt") +
+#scale_x_continuous(limits = c(13,90), breaks = seq(13, 90, 2)) +
+  
 ```
 
 #### What are some of your observations of the plot?
 Response:
+1000 friends is rare. Adults tend to have around 100 friends.
 
 ***
 
@@ -126,7 +169,9 @@ Notes:
 Notes:
 
 ```{r Correlation}
-
+?cor.test
+cor.test(pf$age, pf$friend_count)
+with(pf, cor.test(age, friend_count))
 ```
 
 Look up the documentation for the cor.test function.
@@ -140,7 +185,7 @@ Response:
 Notes:
 
 ```{r Correlation on Subsets}
-with(                 , cor.test(age, friend_count))
+with(subset(pf, age <= 70), cor.test(age, friend_count))
 ```
 
 ***
@@ -154,7 +199,13 @@ Notes:
 Notes:
 
 ```{r}
+with(pf, qplot(likes_received, www_likes_received))
 
+ggplot(aes(x = log10(www_likes_received), y = log10(likes_received)), data = pf) +
+  geom_point(alpha = 1/40, position = position_jitter(h = 0)) +
+  scale_x_log10() +
+  scale_y_log10() +
+  coord_trans(x = 'log10', y = 'log10')
 ```
 
 ***
@@ -163,13 +214,17 @@ Notes:
 Notes:
 
 ```{r Strong Correlations}
-
+ggplot(aes(x = www_likes_received, y = likes_received), data = pf) +
+  geom_point(alpha = 1/40, position = position_jitter(h = 0)) +
+  xlim(0, quantile(pf$www_likes_received, 0.95)) +
+  ylim(0, quantile(pf$likes_received, 0.95))+
+  geom_smooth(method = 'lm', color = 'red')
 ```
 
 What's the correlation betwen the two variables? Include the top 5% of values for the variable in the calculation and round to 3 decimal places.
 
 ```{r Correlation Calcuation}
-
+with(pf, cor.test(likes_received, www_likes_received))
 ```
 
 Response:
@@ -187,12 +242,15 @@ Notes:
 ```{r More Caution With Correlation}
 install.packages('alr3')
 library(alr3)
+data(Mitchell)
+head(Mitchell)
 ```
 
 Create your plot!
 
 ```{r Temp vs Month}
-
+ggplot(aes(x = Month, y = Temp), data = Mitchell) +
+  geom_point()
 ```
 
 ***
@@ -204,7 +262,7 @@ b. What is the actual correlation of the two variables?
 (Round to the thousandths place)
 
 ```{r Noisy Scatterplots}
-
+with(Mitchell, cor.test(Month, Temp))
 ```
 
 ***
@@ -213,7 +271,9 @@ b. What is the actual correlation of the two variables?
 Notes:
 
 ```{r Making Sense of Data}
-
+ggplot(aes(x = Month, y = Temp), data = Mitchell) +
+  geom_point() +
+  scale_x_manual(c(Mitchell$Month / 12))
 ```
 
 ***
