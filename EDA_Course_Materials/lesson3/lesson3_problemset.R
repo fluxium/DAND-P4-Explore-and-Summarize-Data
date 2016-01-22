@@ -123,4 +123,30 @@ install.packages('tidyr')
 library('tidyr')
 library(dplyr)
 
+# rio was unable to properly open and conver csv
+install.packages("rio")
+library("rio")
+
+gapminder <- import("Years in school men 25-34.xlsx")
+
+head(gapminder)
+
+install.packages("xlsx")
+library(xlsx)
+
+ysmen <- read.xlsx("Years in school men 25-34.xlsx", 1)
+
+head(ysmen)
+
+yswomen <- read.xlsx("Years in school women 25-34.xlsx", 1)
+
+head(yswomen)
+
+ysmen$gender <- factor('M')
+yswomen$gender <- factor('F')
+
+# this is basically a union, http://www.statmethods.net/management/merging.html
+ys <- rbind(ysmen, yswomen)
+
+
   
