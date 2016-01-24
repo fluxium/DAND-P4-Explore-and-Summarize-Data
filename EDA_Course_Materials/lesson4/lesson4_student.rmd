@@ -271,9 +271,21 @@ with(Mitchell, cor.test(Month, Temp))
 Notes:
 
 ```{r Making Sense of Data}
+# cyclical pattern
 ggplot(aes(x = Month, y = Temp), data = Mitchell) +
   geom_point() +
-  scale_x_manual(c(Mitchell$Month / 12))
+  scale_x_discrete(breaks = seq(0, 200, 12))
+
+ggplot(aes(x=(Month%%12),y=Temp),data=Mitchell)+ 
+  geom_point()
+
+install.packages('energy')
+library(energy)
+
+x <- seq(0, 4*pi, pi/20)
+y <- cos(x)
+qplot(x = x, y = y)
+energy::dcor.ttest(x, y)
 ```
 
 ***
@@ -282,16 +294,20 @@ ggplot(aes(x = Month, y = Temp), data = Mitchell) +
 
 What do you notice?
 Response:
-
+Cyclical pattern
 Watch the solution video and check out the Instructor Notes!
 Notes:
-
+Perspective and scale are very important with data visualization
 ***
 
 ### Understanding Noise: Age to Age Months
 Notes:
 
 ```{r Understanding Noise: Age to Age Months}
+
+pf$age_with_months = pf$age + (1 - (pf$dob_month / 12)) # or
+
+pf$age_with_months = pf$age + ((12 - pf$dob_month) / 12)
 
 ```
 
@@ -300,6 +316,26 @@ Notes:
 ### Age with Months Means
 
 ```{r Age with Months Means}
+library(dplyr)
+
+pf.fc_by_age_months <- group_by(pf, age_with_months) %>%
+                summarise(friend_count_mean = mean(friend_count),
+                          friend_count_median = median(friend_count),
+                          n = n()) %>% 
+                arrange(age_with_months)
+head(pf.fc_by_age_months)
+
+ggplot(aes(y = friend_count_mean, x = age_with_months), data = pf.fc_by_age_months) +
+  geom_line()
+
+ggplot(aes(y = friend_count_median, x = age_with_months), data = pf.fc_by_age_months) +
+  geom_line()
+
+ggplot(aes(y = friend_count_median, x = age_with_months), data = subset(pf.fc_by_age_months, age_with_months < 71)) +
+  geom_point()
+
+ggplot(aes(y = friend_count_median, x = age_with_months), data = subset(pf.fc_by_age_months, age_with_months < 71)) +
+  geom_line()
 
 ```
 

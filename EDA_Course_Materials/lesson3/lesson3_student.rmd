@@ -89,7 +89,7 @@ ggplot(data = fbdf, aes(x = dob_day)) +
   facet_wrap(~dob_month)
 ```
 
-#### Let’s take another look at our plot. What stands out to you here?
+#### Let's take another look at our plot. What stands out to you here?
 Response:
 Jan 1
 ***
