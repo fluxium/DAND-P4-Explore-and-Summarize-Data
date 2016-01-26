@@ -4,6 +4,8 @@ setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Cours
 # Work Working Directory
 setwd("C:/Source (Remote)/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson3")
 
+load('.rdata')
+
 library(ggplot2)
 library('tidyr')
 library('dplyr')
@@ -334,16 +336,54 @@ bdays$bmonthday <- paste(month(bdays$birthday), day(bdays$birthday))
 # Exploration
 ggplot(aes(x = birthday), data = bdays) +
   geom_histogram(bins = 365) +
-  scale_x_date()
+  scale_x_datetime(date_breaks = '1 month', date_labels = "%m")
 
 # How many people share your birthday? Do you know them?
 # (Reserve time with them or save money to buy them a gift!)
 
+# https://jonkimanalyze.wordpress.com/2014/03/25/ggplot2-time-series-axis-control-breaks-label-limitshttpsjonkimanalyze-wordpress-comwp-adminedit-phpinline-edit/
+# No one shares my birthday
+month_start <- strptime(paste("2016-03-01", "00:00:00"), "%Y-%m-%d %H:%M:%S")
+month_end <- strptime(paste("2016-03-31", "00:00:00"), "%Y-%m-%d %H:%M:%S")
+month_lim <- as.POSIXct(c(month_start, month_end), origin="1970-01-01", tz="GMT")
+
+ggplot(aes(x = birthday), data = bdays) +
+  geom_histogram(bins = 31) +
+  scale_x_datetime(date_breaks = '1 day', date_labels = "%m-%d",
+                   limits = month_lim)
+
 # Which month contains the most number of birthdays?
 
-# How many birthdays are in each month?
+# Seems like March is the most commmon birth month is these data
+ggplot(aes(x = bmonth), data = bdays, xlim = c(1, 12)) +
+  geom_histogram(binwidth = 1) +
+  scale_x_discrete() +
+  scale_y_discrete(breaks = seq(0,20))
+
+# How many birthdays are in each month
+
+# J 6, F 9, M 13, A 12, M 5, J 9, J 12, A 7, S 12, O 9, N 6, D 12
+ggplot(aes(x = bmonth), data = bdays, xlim = c(1, 12)) +
+  geom_histogram(binwidth = 1) +
+  scale_x_discrete() +
+  scale_y_discrete(breaks = seq(0,20))
 
 # Which day of the year has the most number of birthdays?
 
-# Do you have at least 365 friends that have birthdays on everyday
-# of the year?
+# I can see that March has the day with the most number of birthdays
+ggplot(aes(x = birthday), data = bdays) +
+  geom_histogram(bins = 365) +
+  scale_x_datetime(date_breaks = '1 month', date_labels = "%m")
+
+# March 11 has 4 birthdays
+month_start <- strptime(paste("2016-03-01", "00:00:00"), "%Y-%m-%d %H:%M:%S")
+month_end <- strptime(paste("2016-03-31", "00:00:00"), "%Y-%m-%d %H:%M:%S")
+month_lim <- as.POSIXct(c(month_start, month_end), origin="1970-01-01", tz="GMT")
+
+ggplot(aes(x = birthday), data = bdays) +
+  geom_histogram(bins = 31) +
+  scale_x_datetime(date_breaks = '1 day', date_labels = "%m-%d",
+                   limits = month_lim)
+
+# Other exploration
+ggplot(aes(x = ts(birthday)), data = bdays)
