@@ -2,7 +2,7 @@
 setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson3")
 
 # Work Working Directory
-
+setwd("C:/Source (Remote)/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson3")
 
 library(ggplot2)
 library('tidyr')
