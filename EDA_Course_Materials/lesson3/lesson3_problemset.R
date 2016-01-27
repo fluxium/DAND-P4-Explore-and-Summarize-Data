@@ -386,4 +386,12 @@ ggplot(aes(x = birthday), data = bdays) +
                    limits = month_lim)
 
 # Other exploration
-ggplot(aes(x = ts(birthday)), data = bdays)
+# Most common day of the month for a birthday is 2nd, least common is 16th with
+# 0 occurances in these data
+ggplot(aes(x = bday), data = bdays) +
+  geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = seq(1, 31))
+
+# I have no friends with a leap year birthday
+by(bdays$bday, bdays$bmonth, summary)
+
