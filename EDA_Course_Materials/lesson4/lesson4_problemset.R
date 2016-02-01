@@ -251,12 +251,12 @@ grid.arrange(p1, p2, p3)
 
 # Copied from PS 3
 
-ysmen <- read.xlsx("Years in school men 25-34.xlsx", 1)
+ysmen <- read.xlsx("../datasets/Years in school men 25-34.xlsx", 1)
 
 ysmen <- gather(ysmen, key = year, value = years_in_school,
                 -Row.Labels)
 
-yswomen <- read.xlsx("Years in school women 25-34.xlsx", 1)
+yswomen <- read.xlsx("../datasets/Years in school women 25-34.xlsx", 1)
 
 yswomen <- gather(yswomen, key = year, value = years_in_school,
                   -Row.Labels)

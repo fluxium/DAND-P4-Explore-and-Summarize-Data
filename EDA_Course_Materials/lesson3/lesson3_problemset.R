@@ -160,14 +160,14 @@ install.packages('tidyr')
 # your investigation, and submit it when you are ready.
 # ====================================================================================
 
-ysmen <- read.xlsx("Years in school men 25-34.xlsx", 1)
+ysmen <- read.xlsx("../datasets/Years in school men 25-34.xlsx", 1)
 
 #head(ysmen)
 
 ysmen <- gather(ysmen, key = year, value = years_in_school,
                 -Row.Labels)
 
-yswomen <- read.xlsx("Years in school women 25-34.xlsx", 1)
+yswomen <- read.xlsx("../datasets/Years in school women 25-34.xlsx", 1)
 
 #head(yswomen)
 
@@ -317,7 +317,7 @@ ggplot(aes(y = years_in_school, x = gender), data = ys) +
 # your investigation below the line. Submit it when you are ready.
 # ===============================================================================
 
-bdays <- read.csv("friends_bdays.csv")
+bdays <- read.csv("../datasets/friends_bdays.csv")
 head(bdays)
 # Sort needed because strsplit outputs an ordered list of cleaned names
 subset(bdays, select = c(Title, Start.date)) %>% arrange(Title) -> bdays

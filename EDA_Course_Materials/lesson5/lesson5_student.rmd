@@ -8,15 +8,24 @@ Notes:
 
 ### Moira Perceived Audience Size Colored by Age
 Notes:
-
+Adding color to represent age was a deadend. This is common in EDA
 ***
 
 ### Third Qualitative Variable
 Notes:
 
 ```{r Third Qualitative Variable}
+pf <- read.delim("../datasets/pseudo_facebook.tsv")
 ggplot(aes(x = gender, y = age),
        data = subset(pf, !is.na(gender))) + geom_histogram()
+
+ggplot(aes(x = gender, y = age),
+       data = subset(pf, !is.na(gender))) + geom_boxplot() +
+  stat_summary(fun.y = mean, geom = 'point', shape = 4)
+
+ggplot(aes(x = age, y = friend_count),
+       data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = gender), stat = "summary", fun.y = median)
 ```
 
 ***
@@ -25,7 +34,18 @@ ggplot(aes(x = gender, y = age),
 Notes:
 
 ```{r Plotting Conditional Summaries}
+pf.fc_by_age_gender <- pf %>% 
+                       filter(!is.na(gender)) %>%
+                       group_by(age, gender) %>% 
+                       summarize(mean_friend_count = mean(friend_count),
+                                 median_friend_count = median(friend_count),
+                                 n = n()) %>% 
+                       ungroup() %>% 
+                       arrange(age)
 
+ggplot(aes(x = age, y = median_friend_count),
+           data = pf.fc_by_age_gender) +
+  geom_line(color = gender)
 ```
 
 ***
@@ -46,6 +66,13 @@ Notes:
 ```{r}
 install.packages('reshape2')
 library(reshape2)
+pf.fc_by_age_gender.wide = dcast(pf.fc_by_age_gender,
+                                 age ~ gender,
+                                 value.var = 'median_friend_count')
+
+pf.fc_by_age_gender.long = melt(pf.fc_by_age_gender.wide, id.vars = c("age"),
+                                variable.name = 'gender',
+                                value.name = 'median_friend_count')
 ```
 
 
@@ -55,7 +82,9 @@ library(reshape2)
 Notes:
 
 ```{r Ratio Plot}
-
+ggplot(aes(y = female / male, x = age), data =  pf.fc_by_age_gender.wide) +
+  geom_line() +
+  geom_hline(yintercept = 1, linetype = 2, alpha = 0.3)
 ```
 
 ***
@@ -64,7 +93,7 @@ Notes:
 Notes:
 
 ```{r Third Quantitative Variable}
-
+pf$year_joined <- # ref year is 2014, tenure / 365 to get years, subtract from 2014
 ```
 
 ***
