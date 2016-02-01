@@ -222,7 +222,7 @@ ggplot(aes(x = year, y = years_in_school), data =
   geom_boxplot()
 
 # Might be interesting to plot the delta(max - min) over time
-# This really didn't so anything :(
+# This really didn't show anything :(
 ggplot(aes(x = year, y = sqrt(max(years_in_school) - min(years_in_school))),
        data = subset(ys, !is.na(ys$years))) +
   geom_point()

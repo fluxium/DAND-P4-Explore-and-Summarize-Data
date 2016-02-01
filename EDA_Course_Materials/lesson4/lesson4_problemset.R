@@ -249,3 +249,72 @@ grid.arrange(p1, p2, p3)
 # your investigation, and submit it when you are ready.
 # ====================================================================
 
+# Copied from PS 3
+
+ysmen <- read.xlsx("Years in school men 25-34.xlsx", 1)
+
+ysmen <- gather(ysmen, key = year, value = years_in_school,
+                -Row.Labels)
+
+yswomen <- read.xlsx("Years in school women 25-34.xlsx", 1)
+
+yswomen <- gather(yswomen, key = year, value = years_in_school,
+                  -Row.Labels)
+
+ysmen$gender <- factor('M')
+yswomen$gender <- factor('F')
+
+# this is basically a union, http://www.statmethods.net/management/merging.html
+ys <- rbind(ysmen, yswomen)
+
+ys$year <- substring(ys$year, 2)
+
+ys$year <- factor(ys$year)
+ys$years_in_school <- as.numeric(ys$years_in_school)
+ys$country <- ys$Row.Labels
+
+ys <- subset(ys, select = -Row.Labels)
+
+# In this plot we can see the points for the yearly observations by country
+ggplot(aes(x = country, y = years_in_school), data = ys) +
+  geom_point() +
+  # Handy line to adjust the rotation of x-axis labels
+  # http://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# This might be clearer as a boxplot
+ggplot(aes(x = year, y = years_in_school), data = ys) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Boxplot of above
+ggplot(aes(x = year, y = years_in_school), data = ys) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# What are the most improved countries
+ys_most_improved <- group_by(ys, country) %>%
+                    summarize(delta = max(years_in_school) - min(years_in_school),
+                              mean = mean(years_in_school),
+                              median = median(years_in_school),
+                              n = n())
+
+# Plot the delta over time by country
+ggplot(aes(x = country, y = delta), data = ys_most_improved) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# most improved by gender, by country
+ys_most_improved_gender <- group_by(ys, country, gender) %>%
+                           summarize(delta = max(years_in_school) - min(years_in_school),
+                                     mean = mean(years_in_school),
+                                     median = median(years_in_school),
+                                     n = n())
+
+# Plot the delta over time by gender and country
+ggplot(aes(x = country, y = delta, color = gender), data = ys_most_improved_gender) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, 10))
+
+
