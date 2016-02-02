@@ -1,6 +1,23 @@
 Lesson 5
 ========================================================
 
+```{r}
+# setwd for Home workstation
+setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson5")
+
+# setwd for Work workstation
+setwd("C:/Source (Remote)/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson5")
+
+load('.rdata')
+
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(xlsx)
+library(lubridate)
+library(gridExtra)
+```
+
 ### Multivariate Data
 Notes:
 
@@ -93,7 +110,8 @@ ggplot(aes(y = female / male, x = age), data =  pf.fc_by_age_gender.wide) +
 Notes:
 
 ```{r Third Quantitative Variable}
-pf$year_joined <- # ref year is 2014, tenure / 365 to get years, subtract from 2014
+pf$year_joined <- floor(2014 - (pf$tenure / 365))
+head(pf)
 ```
 
 ***
@@ -102,7 +120,7 @@ pf$year_joined <- # ref year is 2014, tenure / 365 to get years, subtract from 2
 Notes:
 
 ```{r Cut a Variable}
-
+pf$year_joined.bucket <- cut(pf$year_joined, c(2004,2009, 2011, 2012,2014))
 ```
 
 ***
@@ -111,7 +129,13 @@ Notes:
 Notes:
 
 ```{r Plotting it All Together}
+table(pf$year_joined.bucket)
 
+ggplot(aes(x = age,  y = friend_count), data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+
+ggplot(aes(x = age,  y = friend_count), data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = year_joined.bucket), stat = 'summary', fun.y = median)
 ```
 
 ***
@@ -120,7 +144,10 @@ Notes:
 Notes:
 
 ```{r Plot the Grand Mean}
-
+ggplot(aes(x = age,  y = friend_count), 
+       data = subset(pf, !is.na(gender)| !is.na(year_joined.bucket))) +
+  geom_line(aes(color = year_joined.bucket), stat = 'summary', fun.y = mean) +
+  geom_line(stat = 'summary', fun.y = mean, linetype = 2)
 ```
 
 ***
@@ -129,7 +156,10 @@ Notes:
 Notes:
 
 ```{r Friending Rate}
+pf$mfr <- pf$friend_count / ifelse(pf$tenure < 1, 1, pf$tenure)
 
+# Instructor code is better :D
+with(subset(pf, tenure >= 1), summary(friend_count / tenure))
 ```
 
 ***
@@ -138,11 +168,15 @@ Notes:
 Notes:
 
 What is the median friend rate?
+0.2202
 
 What is the maximum friend rate?
-
+417
 ```{r Friendships Initiated}
-
+ggplot(aes(x = friendships_initiated / tenure,  y = tenure),
+       data = subset(pf, tenure >= 1 & !is.na(gender) | 
+                     !is.na(year_joined.bucket))) +
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
 ```
 
 ***
