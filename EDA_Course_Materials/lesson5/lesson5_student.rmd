@@ -173,10 +173,10 @@ What is the median friend rate?
 What is the maximum friend rate?
 417
 ```{r Friendships Initiated}
-ggplot(aes(x = friendships_initiated / tenure,  y = tenure),
-       data = subset(pf, tenure >= 1 & !is.na(gender) | 
-                     !is.na(year_joined.bucket))) +
-  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+pf$friendships_initiated_ratio <- pf$friendships_initiated / pf$tenure
+ggplot(aes(y = friendships_initiated_ratio,  x = tenure),
+       data = subset(pf, tenure >= 1)) +
+  geom_line(aes(color = year_joined.bucket))
 ```
 
 ***
@@ -210,6 +210,10 @@ ggplot(aes(x = 90 * round(tenure / 90), y = friendships_initiated / tenure),
             stat = "summary",
             fun.y = mean)
 
+
+ggplot(aes(x = tenure, y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_smooth(aes(color = year_joined.bucket))
 ```
 
 ***
@@ -228,7 +232,19 @@ Notes:
 Notes:
 
 ```{r Histograms Revisited}
+yo <- read.csv("../datasets/yogurt.csv")
+yo$id <- factor(yo$id)
 
+str(yo)
+
+summary(yo)
+table(yo$strawberry)
+summary(yo$price)
+
+qplot(x = price, data = yo, binwidth = 1) # Price is ver descrete
+
+length(unique(yo$price))
+table(yo$price)
 ```
 
 ***
@@ -237,7 +253,8 @@ Notes:
 Notes:
 
 ```{r Number of Purchases}
-
+yo <- transform(yo, all.purchases = strawberry + blueberry + pina.colada
+          + plain + mixed.berry)
 ```
 
 ***
@@ -246,7 +263,8 @@ Notes:
 Notes:
 
 ```{r Prices over Time}
-
+ggplot(aes(x = time, y = price), data = yo) +
+  geom_point(alpha = 1/30)
 ```
 
 ***
@@ -259,7 +277,23 @@ Notes:
 ### Looking at Samples of Households
 
 ```{r Looking at Sample of Households}
+set.seed(4230)
+sample.ids <- sample(levels(yo$id), 16)
 
+ggplot(aes(x = time, y = price), 
+       data = subset(yo, id %in% sample.ids)) +
+  facet_wrap(~ id) +
+  geom_line() +
+  geom_point(aes(size = all.purchases), pch = 1)
+
+set.seed(4373) #6345, 5263, 4373, 1914, 1970
+sample.ids <- sample(levels(yo$id), 16)
+
+ggplot(aes(x = time, y = price), 
+       data = subset(yo, id %in% sample.ids)) +
+  facet_wrap(~ id) +
+  geom_line() +
+  geom_point(aes(size = all.purchases), pch = 1)
 ```
 
 ***
