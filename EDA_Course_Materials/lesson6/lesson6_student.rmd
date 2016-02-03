@@ -1,3 +1,26 @@
+```{r}
+# setwd for Home workstation
+setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson6")
+
+# setwd for Work workstation
+setwd("C:/Source (Remote)/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson6")
+
+load('.rdata')
+
+library(ggplot2)
+library(plyr)
+library(tidyr)
+library(dplyr)
+library(xlsx)
+library(lubridate)
+library(gridExtra)
+library(GGally)
+library(reshape2)
+library(scales)
+library(memisc)
+library(RColorBrewer)
+```
+
 Lesson 6
 ========================================================
 
@@ -10,6 +33,10 @@ Notes:
 
 ```{r Scatterplot Review}
 
+ggplot(data = diamonds, aes(x = carat, y = price)) + 
+  geom_point() +
+  scale_x_continuous(limits = c(0, quantile(diamonds$carat, .99))) +
+  scale_y_continuous(limits = c(0, quantile(diamonds$price, .99)))
 ```
 
 ***
@@ -55,7 +82,7 @@ library(memisc)
 # sample 10,000 diamonds from the data set
 set.seed(20022012)
 diamond_samp <- diamonds[sample(1:length(diamonds$price), 10000), ]
-ggpairs(diamond_samp, params = c(shape = I('.'), outlier.shape = I('.')))
+ggpairs(diamond_samp, params = c(shape = I('.'), outlier.shape = I('.'))) # This code is using deprecated syntax
 ```
 
 What are some things you notice in the ggpairs output?
@@ -68,6 +95,13 @@ Notes:
 
 ```{r The Demand of Diamonds}
 
+plot1 <- qplot(x = price, data = diamonds) + 
+  ggtitle('Price')
+
+plot2 <- qplot(x = log10(price), data = diamonds) +
+  ggtitle('Price (log10)')
+
+grid.arrange(plot1, plot2)
 ```
 
 ***
@@ -107,18 +141,19 @@ ggplot(aes(carat, price), data = diamonds) +
 ### Overplotting Revisited
 
 ```{r Sort and Head Tables}
-
+head(sort(table(diamonds$price), decreasing = T))
+head(sort(table(diamonds$carat), decreasing = T)) # Crowded, will need to account for over plotting
 ```
 
 
 ```{r Overplotting Revisited}
 ggplot(aes(carat, price), data = diamonds) + 
-  geom_point() + 
+  geom_point(alpha = 0.5, size = 0.75, position = 'jitter') +
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
                      breaks = c(350, 1000, 5000, 10000, 15000)) +
-  ggtitle('Price (log10) by Cube-Root of Carat')
+  ggtitle('Price (log10) by Cube-Root of Carat') 
 ```
 
 ***
@@ -134,13 +169,12 @@ Alter the code below.
 ```{r Price vs. Carat and Clarity}
 # install and load the RColorBrewer package
 install.packages('RColorBrewer')
-library(RColorBrewer)
 
-ggplot(aes(x = carat, y = price), data = diamonds) + 
-  geom_point(alpha = 0.5, size = 1, position = 'jitter') +
+ggplot(aes(x = carat, y = price, color = clarity), data = diamonds) + 
+  geom_point(alpha = 0.5, size = 1, position = 'jitter' ) +
   scale_color_brewer(type = 'div',
     guide = guide_legend(title = 'Clarity', reverse = T,
-    override.aes = list(alpha = 1, size = 2))) +  
+    override.aes = list(alpha = 1, size = 2)), palette = 'BrBG') +  
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
     breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
@@ -159,16 +193,16 @@ Response:
 
 Alter the code below.
 ```{r Price vs. Carat and Cut}
-ggplot(aes(x = carat, y = price, color = clarity), data = diamonds) + 
+ggplot(aes(x = carat, y = price, color = cut), data = diamonds) + 
   geom_point(alpha = 0.5, size = 1, position = 'jitter') +
   scale_color_brewer(type = 'div',
-                     guide = guide_legend(title = 'Clarity', reverse = T,
+                     guide = guide_legend(title = 'Cut', reverse = T,
                                           override.aes = list(alpha = 1, size = 2))) +  
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
                      breaks = c(350, 1000, 5000, 10000, 15000)) +
-  ggtitle('Price (log10) by Cube-Root of Carat and Clarity')
+  ggtitle('Price (log10) by Cube-Root of Carat and Cut')
 ```
 
 ***
@@ -182,16 +216,16 @@ Response:
 
 Alter the code below.
 ```{r Price vs. Carat and Color}
-ggplot(aes(x = carat, y = price, color = cut), data = diamonds) + 
+ggplot(aes(x = carat, y = price, color = color), data = diamonds) + 
   geom_point(alpha = 0.5, size = 1, position = 'jitter') +
   scale_color_brewer(type = 'div',
-                     guide = guide_legend(title = Cut, reverse = T,
+                     guide = guide_legend(title = "Color",
                                           override.aes = list(alpha = 1, size = 2))) +  
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
                      breaks = c(350, 1000, 5000, 10000, 15000)) +
-  ggtitle('Price (log10) by Cube-Root of Carat and Cut')
+  ggtitle('Price (log10) by Cube-Root of Carat and Color')
 ```
 
 ***

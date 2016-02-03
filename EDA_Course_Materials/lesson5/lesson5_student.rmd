@@ -16,6 +16,8 @@ library(dplyr)
 library(xlsx)
 library(lubridate)
 library(gridExtra)
+library(GGally)
+library(reshape2)
 ```
 
 ### Multivariate Data
@@ -286,7 +288,7 @@ ggplot(aes(x = time, y = price),
   geom_line() +
   geom_point(aes(size = all.purchases), pch = 1)
 
-set.seed(4373) #6345, 5263, 4373, 1914, 1970
+set.seed(43736345) #6345, 5263, 4373, 1914, 1970
 sample.ids <- sample(levels(yo$id), 16)
 
 ggplot(aes(x = time, y = price), 
@@ -300,7 +302,7 @@ ggplot(aes(x = time, y = price),
 
 ### The Limits of Cross Sectional Data
 Notes:
-
+Cannot get an understanding of the changes over time
 ***
 
 ### Many Variables
@@ -310,7 +312,14 @@ Notes:
 
 ### Scatterplot Matrix
 Notes:
+Produces a scatter plot for every pair of variables
+```{r}
+set.seed(1836)
+pf_subset <- pf[, c(2:15)]
+names(pf_subset)
+ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000), ], axisLabels = 'internal')
 
+```
 ***
 
 ### Even More Variables
@@ -322,7 +331,7 @@ Notes:
 Notes:
 
 ```{r}
-nci <- read.table("nci.tsv")
+nci <- read.table("../datasets/nci.tsv")
 colnames(nci) <- c(1:64)
 ```
 
