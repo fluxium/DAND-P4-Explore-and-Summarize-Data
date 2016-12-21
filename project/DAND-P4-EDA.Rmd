@@ -21,13 +21,87 @@ library(tidyr)
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
-
+wine_quality <- read.csv("../Data/wineQualityReds.csv")
 ```
 
 # Univariate Plots Section
-```{r echo=FALSE, Univariate_Plots}
-
+```{r echo=TRUE, Univariate_Plots}
+str(wine_quality)
+summary(wine_quality)
 ```
+I think it might be useful to have quality as a factor
+
+```{r echo=TRUE, Univariate_Plots}
+wine_quality$quality <- factor(ordered(wine_quality$quality))
+str(wine_quality$quality)
+summary(wine_quality$quality)
+```
+
+Now that I am happy with how quality is looking lets see what it looks like
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = quality)) + geom_bar(stat = "count") 
+```
+No scores of less than 3. Scores of 3 and 4 are uncommon. 5 or better represents the bulk of the wines.
+After seeing the distribution of quality I wanted to check the mean and standard deviation. It was a little tricky after converting quality to a factor.
+
+```{r echo=TRUE, Univariate_Plots}
+qual_mean <- mean(as.numeric(levels(wine_quality$quality)[wine_quality$quality]))
+qual_sd <- sd(as.numeric(levels(wine_quality$quality)[wine_quality$quality]))
+qual_mean
+qual_sd
+```
+The mean and standard deviation look approriate for this distribution
+
+Now let's look at some of the other variables that could contribute to the quality rating
+
+Let's see what the variables related to acidity look like
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = fixed.acidity)) + geom_histogram(binwidth = 0.2) 
+```
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = volatile.acidity)) + geom_histogram(binwidth = 0.03) 
+```
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = citric.acid)) + geom_histogram(binwidth = 0.02) 
+```
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = citric.acid)) + geom_histogram(binwidth = 0.01) 
+```
+
+Several wines have 0.00 g/L citric acid. There is an interesting spike of wines with 0.49 g/L citric acid. I will have a closer look at that later.
+
+```{r echo=TRUE, Univariate_Plots}
+#wine_quality$citric.acid
+cond <- wine_quality$citric.acid == 0.49
+wine_quality[cond,]
+```
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = pH)) + geom_histogram(binwidth = 0.02) 
+```
+
+Most wines in this data set fall between 3.1 and 3.5
+
+Now let's see what the variables for sulphates content look like
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = free.sulfur.dioxide)) + geom_histogram(binwidth = 1) 
+```
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = total.sulfur.dioxide)) + geom_histogram(binwidth = 3) 
+```
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(data = wine_quality, aes(x = sulphates)) + geom_histogram(binwidth = 0.02) 
+```
+
+All of the sulphate variables seem to have a simular right skew. There seem to be some wines with very high sulphate content relative to the rest of the wines.
 
 # Univariate Analysis
 
