@@ -12,6 +12,9 @@ Notes:
 Notes:
 
 ```{r Scatterplots}
+
+library(ggplot2)
+
 pf <- read.delim('../datasets/pseudo_facebook.tsv')
 pf
 qplot(x = age, y = friend_count, data = pf)

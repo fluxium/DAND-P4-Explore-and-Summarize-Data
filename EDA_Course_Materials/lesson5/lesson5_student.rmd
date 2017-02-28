@@ -6,7 +6,7 @@ Lesson 5
 setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson5")
 
 # setwd for Work workstation
-setwd("C:/Source (Remote)/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson5")
+#setwd("C:/Source (Remote)/Repos/DAND-P4-Explore-and-Summarize-Data/EDA_Course_Materials/lesson5")
 
 load('.rdata')
 
@@ -36,7 +36,7 @@ Notes:
 ```{r Third Qualitative Variable}
 pf <- read.delim("../datasets/pseudo_facebook.tsv")
 ggplot(aes(x = gender, y = age),
-       data = subset(pf, !is.na(gender))) + geom_histogram()
+       data = subset(pf, !is.na(gender))) + geom_histogram(stat="identity")
 
 ggplot(aes(x = gender, y = age),
        data = subset(pf, !is.na(gender))) + geom_boxplot() +
@@ -64,7 +64,7 @@ pf.fc_by_age_gender <- pf %>%
 
 ggplot(aes(x = age, y = median_friend_count),
            data = pf.fc_by_age_gender) +
-  geom_line(color = gender)
+  geom_line(aes(color = gender))
 ```
 
 ***
@@ -83,7 +83,7 @@ Notes:
 Notes:
 
 ```{r}
-install.packages('reshape2')
+#install.packages('reshape2')
 library(reshape2)
 pf.fc_by_age_gender.wide = dcast(pf.fc_by_age_gender,
                                  age ~ gender,
