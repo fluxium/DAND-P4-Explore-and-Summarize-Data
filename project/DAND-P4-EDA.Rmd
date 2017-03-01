@@ -189,12 +189,20 @@ ggpairs(wine_quality,
 
 ```{r echo=FALSE, Bivariate_Plots2}
 wq.names.sulphur <- c("free.sulfur.dioxide", "total.sulfur.dioxide", "sulphates", "chlorides")
-ggpairs(wine_quality, columns = wq.names.sulphur, mapping = aes(color = quality))
+ggpairs(wine_quality,
+        columns = wq.names.sulphur,
+        mapping = aes(color = quality),
+        lower = list(continuous = ggscatalpha), 
+        diag = list(continuous = ggdensalpha))
 ```
 
 ```{r echo=FALSE, Bivariate_Plots3}
 wq.names.alcohol <- c("alcohol", "residual.sugar", "density")
-ggpairs(wine_quality, columns = wq.names.alcohol, mapping = aes(color = quality),lower = list(alpha = 0.01))
+ggpairs(wine_quality,
+        columns = wq.names.alcohol,
+        mapping = aes(color = quality),
+        lower = list(continuous = ggscatalpha), 
+        diag = list(continuous = ggdensalpha))
 ```
 
 # Bivariate Analysis
