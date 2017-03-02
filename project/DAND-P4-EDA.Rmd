@@ -186,6 +186,7 @@ ggpairs(wine_quality,
         lower = list(continuous = ggscatalpha), 
         diag = list(continuous = ggdensalpha))
 ```
+The negative correlation between citric.acid and volatile.acid is interesting here. I will be sure to investigate that further.
 
 ```{r echo=FALSE, Bivariate_Plots2}
 wq.names.sulphur <- c("free.sulfur.dioxide", "total.sulfur.dioxide", "sulphates", "chlorides")
@@ -195,7 +196,7 @@ ggpairs(wine_quality,
         lower = list(continuous = ggscatalpha), 
         diag = list(continuous = ggdensalpha))
 ```
-
+ 
 ```{r echo=FALSE, Bivariate_Plots3}
 wq.names.alcohol <- c("alcohol", "residual.sugar", "density")
 ggpairs(wine_quality,
