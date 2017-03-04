@@ -22,8 +22,14 @@ library(gridExtra)
 library(GGally)
 library(reshape2)
 
+try(
+  setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/project/")
+)
+try(
+  setwd("C:/Source/Repos/DAND-P4-Explore-and-Summarize-Data/project/")
+)
 
-setwd("C:/Users/Mahlon/Source/Repos/DAND-P4-Explore-and-Summarize-Data/project/")
+load("./.RData")
 
 ```
 
@@ -186,7 +192,7 @@ ggpairs(wine_quality,
         lower = list(continuous = ggscatalpha), 
         diag = list(continuous = ggdensalpha))
 ```
-The negative correlation between citric.acid and volatile.acid is interesting here. I will be sure to investigate that further.
+The negative correlation between citric.acid and volatile.acid is interesting here. I will be sure to investigate that further. Also, it seems like the highest rated wines have lower volitile.acidity and higher citric.acid. On the other hand, the lowest rated wines tend to have higher volatile.acidity.
 
 ```{r echo=FALSE, Bivariate_Plots2}
 wq.names.sulphur <- c("free.sulfur.dioxide", "total.sulfur.dioxide", "sulphates", "chlorides")
@@ -196,6 +202,7 @@ ggpairs(wine_quality,
         lower = list(continuous = ggscatalpha), 
         diag = list(continuous = ggdensalpha))
 ```
+ Surprisingly, it would seem like high sulphates has a positive effect on the wine's rating.
  
 ```{r echo=FALSE, Bivariate_Plots3}
 wq.names.alcohol <- c("alcohol", "residual.sugar", "density")
