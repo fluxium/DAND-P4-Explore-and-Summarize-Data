@@ -77,6 +77,18 @@ ggplot(data = wine_quality, aes(x = citric.acid)) + geom_histogram(binwidth = 0.
 
 Several wines have 0.00 g/L citric acid. There is an interesting spike of wines with 0.24 and 0.49 g/L citric acid. I wonder if these could additional modes could indicate wine from a specific producer.
 
+```{r echo=FALSE}
+# http://mgimond.github.io/ES218/Week05a.html
+ggplot(wine_quality, aes(x=1, y=citric.acid)) + 
+  geom_boxplot() +
+  xlab(NULL) + 
+  theme(axis.text.y=element_blank()) + 
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 1.1), breaks = seq(0, 1.1, 0.1))
+      
+```
+
+
 ```{r echo=FALSE, Univariate_Plots9}
 ggplot(data = wine_quality, aes(x = pH)) + geom_density()
 ```
@@ -104,6 +116,9 @@ Finally let's see what alcohol and related parameters looks like:
 ```{r echo=FALSE, Univariate_Plots13}
 ggplot(data = wine_quality, aes(x = alcohol)) + geom_density()
 ```
+
+Most wines have 
+
 ```{r echo=FALSE, Univariate_Plots14}
 ggplot(data = wine_quality, aes(x = density)) + geom_density()
 ```
@@ -129,9 +144,21 @@ ggplot(aes(x = residual.sugar), data = wine_quality) +
   scale_x_continuous(limits = c(3, 7))
 ```
 
-There seemed to be some secondary modes in the original plot, however I think all I was noticing places where there sparse values making it seem like an additional peak. 
+There seemed to be some secondary modes in the original plot, however I think all I was noticing places where there sparse values making it seem like an additional peak.
 
-Looks like most of the red wine sampled fell in the 9% to 11% ABV range. The plot of the density variable looks almost too perfectly normally distributed. It does make sense since there aren't many wines with a very high alcohol content or very high residual sugars. I was expecting the alcohol and residual sugar plots to appear very similar. The relationship between these two variables must be more complex than I expected.
+```{r echo=FALSE}
+# http://mgimond.github.io/ES218/Week05a.html
+ggplot(wine_quality, aes(x=1, y=residual.sugar)) + 
+  geom_boxplot() +
+  xlab(NULL) + 
+  theme(axis.text.y=element_blank()) + 
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 17), breaks = seq(0, 17, 1))
+      
+```
+Box plot confirms what I was seeing in the density plot - most of the falling in a narrow lower band with some widely spaced outliers.
+
+Looks like most of the red wine sampled fell in the 9% to 11% ABV range. Alcohol volumes of 9.5% and 10.9% seem to more common. The plot of the density variable looks almost too perfectly normally distributed. It does make sense since there aren't many wines with a very high alcohol content or very high residual sugars. I was expecting the alcohol and residual sugar plots to appear very similar. The relationship between these two variables must be more complex than I expected.
 
 # Univariate Analysis
 
@@ -169,7 +196,11 @@ ggcorr(wq, label = TRUE, hjust = 0.9, layout.exp = 2)
 ggcorr(wq, nbreaks = 3, label = TRUE, hjust = 0.9, layout.exp = 2)
 ```
 
-Seeing this correallation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. 
+Seeing this correallation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. The alcohol variable seems to explain about half of the variance in the quality variable. volatile.acidity has fairly high negative correllation to the quality variable. Not surprised about that. Aceitic acid vapor is not what most people are looking for when they take the first sip. I am curious about the slightly elevate correllation of sulphates and the quality variable.
+
+```{r echo=TRUE, Bivariate_Plots}
+
+```
 
 # Bivariate Analysis
 
