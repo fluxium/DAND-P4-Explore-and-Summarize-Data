@@ -196,11 +196,25 @@ ggcorr(wq, label = TRUE, hjust = 0.9, layout.exp = 2)
 ggcorr(wq, nbreaks = 3, label = TRUE, hjust = 0.9, layout.exp = 2)
 ```
 
-Seeing this correallation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. The alcohol variable seems to explain about half of the variance in the quality variable. volatile.acidity has fairly high negative correllation to the quality variable. Not surprised about that. Aceitic acid vapor is not what most people are looking for when they take the first sip. I am curious about the slightly elevate correllation of sulphates and the quality variable.
+Seeing this correallation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. The alcohol variable seems to explain about substantial amount of the variance in the quality variable. volatile.acidity has fairly high negative correllation to the quality variable. Not surprised about that. Aceitic acid vapor is not what most people are looking for when they take the first sip. I am curious about the slightly elevated correllation of sulphates and the quality variable.
 
 ```{r echo=TRUE, Bivariate_Plots}
-
+ggplot(wine_quality, aes(x = quality, y = alcohol)) +
+  geom_point(alpha = 1/25)
 ```
+Tried several alpha values. There seems to be a lower mean when quality is 5 but a scatter plot with a factor makes things a little crowded. Probably better as box plot I am thinking.
+
+```{r echo=TRUE, Bivariate_Plots}
+ggplot(wine_quality, aes(x = quality, y = alcohol)) +
+  geom_boxplot()
+```
+That's better. With the box plot you can the trend from the scatter plot more clearly. Most of the lower scores tend to have an alcohol content aroun 10. Scores of 5 are densly packed around the mean with several outliers, some of which are extreme. Starting with scores of 6 and above there seems to be an upward trend in the mean alcohol content. To keep this in prespective I want to remind myself how many observations fall in to each of the scores.
+
+```{r echo=TRUE, Bivariate_Plots}
+summary(wine_quality$quality)
+```
+
+
 
 # Bivariate Analysis
 
