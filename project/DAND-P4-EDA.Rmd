@@ -259,7 +259,9 @@ The next interesting correllation from the inital corellation plot I want to exa
 ggplot(wine_quality, aes(x = sulphates, y = chlorides)) +
   geom_point(alpha = 1/15)
 ```
-For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulphates except for having the bulk of the values over a slightly larger range.
+For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulphates except for having the bulk of the values over a slightly larger range. There are observations where the suphate measurement is high and the corresponding chloride measurement is low or high. There are no observations where the suphate measurement is low and the chloride measurement is exteme.
+
+There seems to be a fairly strong relationship between volatile.acidity and citric.acid. 
 
 ```{r echo=TRUE, Bivariate_Plots}
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
@@ -283,14 +285,30 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
 ```
 Superimposing a linear model confirms the conclusion from the previous plot.
 
+The fixed.acidity and citric.acid measurements appear to have a very strong correllation. I was going to ignore this relationship until I read the description of each of the variables again. I was under the impression that the fixed.acidity measurement was a measurement of all acidity except aecetic acid. Since this is not the case let's investigate this relationship.
+
+```{r echo=TRUE, Bivariate_Plots}
+ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
+  geom_point(alpha = 1/10)
+```
+Visually there seems to be a slight exponential curve. Let's see what log(fixed.acidity) looks like.
+
+```{r echo=TRUE, Bivariate_Plots}
+ggplot(wine_quality, aes(x = citric.acid, y = log(fixed.acidity))) +
+  geom_point(alpha = 1/10) +
+  stat_smooth(method = "lm")
+```
+There is a very slight linear normalization when plotting citric.acid and log(fixed.acidity).
+
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
-
+There seem to be two variable that are driving the varience in the quality variable. Higher acohol content tends to produce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me. 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related.
+I found there was a postitive relationship between fixed.acidity and citric.acid. 
 
 ### What was the strongest relationship you found?
-
 
 
 
@@ -319,8 +337,6 @@ ggpairs(wine_quality,
         lower = list(continuous = ggscatalpha), 
         diag = list(continuous = ggdensalpha))
 ```
-
-The negative correlation between citric.acid and volatile.acid is interesting here. I will be sure to investigate that further. Also, it seems like the highest rated wines have lower volatile.acidity and higher citric.acid. On the other hand, the lowest rated wines tend to have higher volatile.acidity.
 
 ```{r echo=FALSE, Bivariate_Plots2}
 wq.names.sulphur <- c("free.sulfur.dioxide", "total.sulfur.dioxide", "sulphates", "chlorides")
