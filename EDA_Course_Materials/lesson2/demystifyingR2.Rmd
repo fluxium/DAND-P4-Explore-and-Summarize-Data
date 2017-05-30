@@ -163,7 +163,8 @@ Which car(s) have an mpg (miles per gallon) greater than or equal to 30
 OR hp (horsepower) less than 60? Create an R chunk of code to answer the question.
 
 ```{r}
-subset(mtcars, mpg >= 30 | hp < 60)
+mtcars[mtcars$mpg >= 30 | mtcars$hp < 60,]
+# subset(mtcars, mpg >= 30 | hp < 60)
 ```
 
 
