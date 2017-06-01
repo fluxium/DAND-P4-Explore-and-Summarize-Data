@@ -6,7 +6,7 @@ output: html_document
 ---
 ========================================================
 
-```{r setup, echo=FALSE, message=FALSE, warning=FALSE, packages}
+```{r setup, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 # Load all of the packages that you end up using
 # in your analysis in this code chunk.
 
@@ -31,6 +31,7 @@ wine_quality <- read.csv("../Data/wineQualityReds.csv")
 ```{r echo=TRUE, Univariate_Plots1}
 summary(wine_quality)
 ```
+
 I think it might be useful to have quality as a factor
 
 ```{r echo=TRUE, Univariate_Plots2}
@@ -44,6 +45,7 @@ Now that I am happy with how quality is looking lets see what it looks like
 ```{r echo=FALSE, Univariate_Plots3}
 ggplot(data = wine_quality, aes(x = quality)) + geom_bar(stat = "count") 
 ```
+
 No scores of less than 3. Scores of 3 and 4 are uncommon. 5 or better represents the bulk of the wines.
 After seeing the distribution of quality I wanted to check the mean and standard deviation. It was a little tricky after converting quality to a factor.
 
@@ -53,6 +55,7 @@ qual_sd <- sd(as.numeric(levels(wine_quality$quality)[wine_quality$quality]))
 qual_mean
 qual_sd
 ```
+
 The mean and standard deviation look appropriate for this distribution
 
 Now let's look at some of the other variables that could contribute to the quality rating
@@ -61,23 +64,26 @@ Let's see what the variables related to acidity look like.
 
 For single variable analysis I prefer the density plot since you don't have to be overly concerned tweaking the binwidth.
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots5}
 ggplot(data = wine_quality, aes(x = fixed.acidity)) + geom_density()
 ```
 
-```{r echo=FALSE, Univariate_Plots5}
+```{r echo=FALSE, Univariate_Plots6}
 ggplot(data = wine_quality, aes(x = volatile.acidity)) + geom_density()
 ```
-There is an interesting bimodal distributing happening here with volatile.acidity.
+
+There could be a bimodal distribution happening here with volatile.acidity.
+
+Now for citric.acid
 
 ```{r echo=FALSE, Univariate_Plots7}
 ggplot(data = wine_quality, aes(x = citric.acid)) + geom_density()
 ggplot(data = wine_quality, aes(x = citric.acid)) + geom_histogram(binwidth = 0.01)
 ```
 
-Several wines have 0.00 g/L citric acid. There is an interesting spike of wines with 0.24 and 0.49 g/L citric acid. I wonder if these could additional modes could indicate wine from a specific producer.
+Several wines have 0.00 g/L citric acid. The density plot is a is a little hard to tell where the bulk of these data are. The histogram doesn't really help the situation. citric.acid distribution has elements of a uniform distribution. There is an interesting spike of wines with 0.24 and 0.49 g/L citric acid. I wonder if these could additional modes could indicate wine from a specific producer. 
 
-```{r echo=FALSE}
+```{r echo=FALSE, Univariate_Plots8}
 # http://mgimond.github.io/ES218/Week05a.html
 ggplot(wine_quality, aes(x=1, y=citric.acid)) + 
   geom_boxplot() +
@@ -85,9 +91,11 @@ ggplot(wine_quality, aes(x=1, y=citric.acid)) +
   theme(axis.text.y=element_blank()) + 
   coord_flip() +
   scale_y_continuous(limits = c(0, 1.1), breaks = seq(0, 1.1, 0.1))
-      
 ```
 
+This plot sheds a bit of light on where the majority of the citric.acid observations are. Looks like about half of the observations are between 0.1 and 0.4 g\L.
+
+Let's take a look at pH
 
 ```{r echo=FALSE, Univariate_Plots9}
 ggplot(data = wine_quality, aes(x = pH)) + geom_density()
@@ -95,7 +103,7 @@ ggplot(data = wine_quality, aes(x = pH)) + geom_density()
 
 Most wines in this data set fall between 3.1 and 3.5
 
-Now let's see what the variables for sulphate and related compound content looks like
+Now let's see what the variables for sulphate and related compounds content looks like
 
 ```{r echo=FALSE, Univariate_Plots10}
 ggplot(data = wine_quality, aes(x = free.sulfur.dioxide)) + geom_density()
@@ -117,11 +125,25 @@ Finally let's see what alcohol and related parameters looks like:
 ggplot(data = wine_quality, aes(x = alcohol)) + geom_density()
 ```
 
-Most wines have 
+Most wines have between 9% and 11% ABV
+
+```{r echo=FALSE}
+# http://mgimond.github.io/ES218/Week05a.html
+ggplot(wine_quality, aes(x=1, y=alcohol)) + 
+  geom_boxplot() +
+  xlab(NULL) + 
+  theme(axis.text.y=element_blank()) + 
+  coord_flip() +
+  scale_y_continuous(limits = c(8, 15), breaks = seq(8, 15))
+```
+
+Half of the observations are between 9.5% to 11.1% ABV
 
 ```{r echo=FALSE, Univariate_Plots14}
 ggplot(data = wine_quality, aes(x = density)) + geom_density()
 ```
+
+No surprises here. 
 
 ```{r echo=FALSE, Univariate_Plots15}
 ggplot(aes(x = residual.sugar), data = wine_quality) + geom_density()
@@ -129,7 +151,7 @@ ggplot(aes(x = residual.sugar), data = wine_quality) + geom_density()
 
 There are some wines with very high residual sugars; let's zoom in on the mean:
 
-```{r echo=FALSE}
+```{r echo=FALSE, Univariate_Plots16}
 ggplot(aes(x = residual.sugar), data = wine_quality) + 
   geom_density() + 
   scale_x_continuous(limits = c(0, 6))
@@ -138,7 +160,7 @@ ggplot(aes(x = residual.sugar), data = wine_quality) +
 Seems like most of the values are between 1.5 and 2.5.
 There seems to be areas of increased frequency at 4 and 5 out on the tail.
 
-```{r echo=FALSE}
+```{r echo=FALSE, Univariate_Plots17}
 ggplot(aes(x = residual.sugar), data = wine_quality) + 
   geom_density() + 
   scale_x_continuous(limits = c(3, 7))
@@ -146,7 +168,7 @@ ggplot(aes(x = residual.sugar), data = wine_quality) +
 
 There seemed to be some secondary modes in the original plot, however I think all I was noticing places where there sparse values making it seem like an additional peak.
 
-```{r echo=FALSE}
+```{r echo=FALSE, Univariate_Plots18}
 # http://mgimond.github.io/ES218/Week05a.html
 ggplot(wine_quality, aes(x=1, y=residual.sugar)) + 
   geom_boxplot() +
@@ -154,20 +176,20 @@ ggplot(wine_quality, aes(x=1, y=residual.sugar)) +
   theme(axis.text.y=element_blank()) + 
   coord_flip() +
   scale_y_continuous(limits = c(0, 17), breaks = c(0:17))
-      
 ```
+
 Box plot confirms what I was seeing in the density plot - most of the falling in a narrow lower band around the median with some widely spaced outliers.
 
 Looks like most of the red wine sampled fell in the 9% to 11% ABV range. Alcohol volumes of 9.5% and 10.9% seem to more common. The plot of the density variable looks almost too perfectly normally distributed. It does make sense since there aren't many wines with a very high alcohol content or very high residual sugars. I was expecting the alcohol and residual sugar plots to appear very similar. The relationship between these two variables must be more complex than I expected.
 
 Last but not least - chlorides. This physiochemical measurement didn't fall in to any of the other logical groupings so it has been plotted on it's own.
 
-```{r echo=FALSE}
+```{r echo=FALSE, Univariate_Plots19}
 ggplot(aes(x = chlorides), data = wine_quality) + 
   geom_density()
 ```
-Very high right skew here. Very few observations outside of the 0.05 to 0.15 range. 
 
+Very high right skew here. Very few observations outside of the 0.05 to 0.15 range.
 
 # Univariate Analysis
 
@@ -194,7 +216,7 @@ Some of the distributions were unexpected but not bizarre in any way.
 
 What are the driving corellations?
 
-```{r echo=TRUE, Bivariate_Plots0.1}
+```{r echo=TRUE, Bivariate_Plots0}
 # https://briatte.github.io/ggcorr/
 wq <- wine_quality[, !(names(wine_quality) %in% c("X"))]
 wq$quality <- as.numeric(levels(wq$quality)[wq$quality])
@@ -208,13 +230,14 @@ ggcorr(wq, nbreaks = 3, label = TRUE, hjust = 0.9, layout.exp = 2)
 
 Seeing this correllation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. The alcohol variable seems to explain about substantial amount of the variance in the quality variable. volatile.acidity has fairly high negative correllation to the quality variable. Not surprised about that. Aceitic acid vapor is not what most people are looking for when they take the first sip. I am curious about the slightly elevated correllation of sulphates and the quality variable. Despite being evident during the univariate exploration, I am still a little surprised by the 0 values for residual.sugar for alcohol and quality.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots1}
 ggplot(wine_quality, aes(x = quality, y = alcohol)) +
   geom_jitter(alpha = 1/10)
 ```
+
 Tried several alpha values and jitter. There seems to be a lower mean when quality is 5 but a scatter plot with a factor makes things a little unclear. Probably better as box plot I am thinking.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots2}
 # http://stackoverflow.com/questions/3989987/joining-means-on-a-boxplot-with-a-line-ggplot2
 ggplot(wine_quality, aes(x = quality, y = alcohol)) +
   geom_boxplot() +
@@ -222,16 +245,18 @@ ggplot(wine_quality, aes(x = quality, y = alcohol)) +
   stat_summary(aes(group = 1), fun.y = mean, geom = "line", show.legend = FALSE) +
   stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE) 
 ```
+
 That's better. With the box plot you can the trend from the scatter plot more clearly. Most of the lower scores tend to have an alcohol content around 10. Scores of 5 are densly packed around the median with several outliers, some of which are extreme. Starting with scores of 6 and above there seems to be an upward trend in the mean alcohol content. To keep this in prespective I want to remind myself how many observations fall in to each of the scores. Adding the mean marker m and a connecting line makes the tendancy in these data clearer.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots3}
 summary(wine_quality$quality)
 ```
+
 Seeing that this trend presentes itself over more than half of the observations is some additional supporting evidence to the correlation score alcohol and quality have.
 
 Now for the next variable that has a higher correlation to quality, volatile.acidity
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots4}
 # http://stackoverflow.com/questions/3989987/joining-means-on-a-boxplot-with-a-line-ggplot2
 ggplot(wine_quality, aes(x = quality, y = volatile.acidity)) +
   geom_boxplot() +
@@ -243,7 +268,8 @@ ggplot(wine_quality, aes(x = quality, y = volatile.acidity)) +
 We can see the the negative correllation clearly here. The IQR is compressing as the quality improves. There is an overall negative trend in volatile.acidity as the quality increases.
 
 Even though the effect of sulphates on quality doesn't rank as highly as some of the other variables, I still want to examine it.
-```{r echo=TRUE, Bivariate_Plots}
+
+```{r echo=TRUE, Bivariate_Plots5}
 # http://stackoverflow.com/questions/3989987/joining-means-on-a-boxplot-with-a-line-ggplot2
 ggplot(wine_quality, aes(x = quality, y = sulphates)) +
   geom_boxplot() +
@@ -251,25 +277,28 @@ ggplot(wine_quality, aes(x = quality, y = sulphates)) +
   stat_summary(aes(group = 1), fun.y = mean, geom = "line", show.legend = FALSE) +
   stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE) 
 ```
+
 It would seem that the wines that received a higher score tend to have higher sulphate levels.
 
 The next interesting correllation from the inital corellation plot I want to examine is sulphates by chlorides.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots6}
 ggplot(wine_quality, aes(x = sulphates, y = chlorides)) +
   geom_point(alpha = 1/15)
 ```
+
 For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulphates except for having the bulk of the values over a slightly larger range. There are observations where the suphate measurement is high and the corresponding chloride measurement is low or high. There are no observations where the suphate measurement is low and the chloride measurement is exteme.
 
 There seems to be a fairly strong relationship between volatile.acidity and citric.acid. 
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots7}
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
   geom_point(alpha = 1/10)
 ```
+
 There is a wide range of volatile.acidity values for each citric.acid measurement. There does seems to be a negative correllation here but the variance would be quite high. The bands of common citric.acid measurements (0.0, 0.24, and 0.49) that were noted during the univariate exploration are visible here. Visually, it seems that beyond citric.acid measurements of 0.49 the trend reverses and begins upward. 
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots8}
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
   geom_point(alpha = 1/10) +
   scale_x_continuous(limits = c(0.3, 1.0), breaks = seq(0.3, 1.0, 0.05))
@@ -277,28 +306,35 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
 
 Acctually, the trend seems to be fairly flat from around citric.acid measurements > 0.35.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots9}
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
   geom_point(alpha = 1/10) +
   scale_x_continuous(limits = c(0.3, 1.0), breaks = seq(0.3, 1.0, 0.05)) +
   stat_smooth(method = "lm")
 ```
-Superimposing a linear model confirms the conclusion from the previous plot.
+
+Superimposing a linear model confirms the tendancy is approaching flat but still slightly negative.
 
 The fixed.acidity and citric.acid measurements appear to have a very strong correllation. I was going to ignore this relationship until I read the description of each of the variables again. I was under the impression that the fixed.acidity measurement was a measurement of all acidity except aecetic acid. Since this is not the case let's investigate this relationship.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots10}
 ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
   geom_point(alpha = 1/10)
 ```
+
 Visually there seems to be a slight exponential curve. Let's see what log(fixed.acidity) looks like.
 
-```{r echo=TRUE, Bivariate_Plots}
+```{r echo=TRUE, Bivariate_Plots11}
+ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
+  geom_point(alpha = 1/10) +
+  stat_smooth(method = "lm")
+
 ggplot(wine_quality, aes(x = citric.acid, y = log(fixed.acidity))) +
   geom_point(alpha = 1/10) +
   stat_smooth(method = "lm")
 ```
-There is a very slight linear normalization when plotting citric.acid and log(fixed.acidity).
+
+With the linear model overlayed over the original plot the cure is no longer perceptable.
 
 # Bivariate Analysis
 
@@ -314,7 +350,7 @@ I found there was a postitive relationship between fixed.acidity and citric.acid
 
 # Multivariate Plots Section
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, Multivariate_Plots1}
 # http://stackoverflow.com/questions/34975190/set-alpha-and-remove-black-outline-of-density-plots-in-ggpairs
 ggscatalpha <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) +
@@ -329,7 +365,7 @@ ggdensalpha <- function(data, mapping, ...) {
 
 Let's have a look at all the pairs so I know where to spend additional time:
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, Multivariate_Plots2}
 wq.names.acid <- c("fixed.acidity", "volatile.acidity", "citric.acid", "pH")
 ggpairs(wine_quality,
         columns = wq.names.acid, 
@@ -338,7 +374,7 @@ ggpairs(wine_quality,
         diag = list(continuous = ggdensalpha))
 ```
 
-```{r echo=FALSE, Bivariate_Plots2}
+```{r echo=FALSE, Multivariate_Plots3}
 wq.names.sulphur <- c("free.sulfur.dioxide", "total.sulfur.dioxide", "sulphates", "chlorides")
 ggpairs(wine_quality,
         columns = wq.names.sulphur,
@@ -349,7 +385,7 @@ ggpairs(wine_quality,
 
 Surprisingly, it would seem like higher sulphates has a positive effect on the wine's rating.
  
-```{r echo=FALSE, Bivariate_Plots3}
+```{r echo=FALSE, Multivariate_Plots4}
 wq.names.alcohol <- c("alcohol", "residual.sugar", "density")
 ggpairs(wine_quality,
         columns = wq.names.alcohol,
@@ -358,7 +394,7 @@ ggpairs(wine_quality,
         diag = list(continuous = ggdensalpha))
 ```
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, Multivariate_Plots5}
 
 ```
 
