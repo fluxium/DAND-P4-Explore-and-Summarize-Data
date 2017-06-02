@@ -275,7 +275,7 @@ ggplot(wine_quality, aes(x = quality, y = sulphates)) +
   geom_boxplot() +
   # aes(group = 1) added to line plot forces stat_summary to be scoped to pre-aggregated data so line can connect means from each group
   stat_summary(aes(group = 1), fun.y = mean, geom = "line", show.legend = FALSE) +
-  stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE) 
+  stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE)
 ```
 
 It would seem that the wines that received a higher score tend to have higher sulphate levels.
@@ -287,7 +287,17 @@ ggplot(wine_quality, aes(x = sulphates, y = chlorides)) +
   geom_point(alpha = 1/15)
 ```
 
-For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulphates except for having the bulk of the values over a slightly larger range. There are observations where the suphate measurement is high and the corresponding chloride measurement is low or high. There are no observations where the suphate measurement is low and the chloride measurement is exteme.
+For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulphates except for having the bulk of the values over a slightly larger range. There are observations where the suphate measurement is high and the corresponding chloride measurement is low or high. There are no observations where the suphate measurement is low and the chloride measurement is exteme. I don't think this is a very meanful correllation.
+
+Let's see what a linear model looks like on top of these data.
+
+```{r echo=TRUE, Bivariate_Plots6.1}
+ggplot(wine_quality, aes(x = sulphates, y = chlorides)) +
+  geom_point(alpha = 1/15) +
+  stat_smooth(method = "lm")
+```
+
+This was what I was expecting. This doesn't seem to be a meaningful relationship.
 
 There seems to be a fairly strong relationship between volatile.acidity and citric.acid. 
 
@@ -322,7 +332,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
   geom_point(alpha = 1/10)
 ```
 
-Visually there seems to be a slight exponential curve. Let's see what log(fixed.acidity) looks like.
+Visually, there seems to be a slight exponential curve. Let's see what log(fixed.acidity) looks like.
 
 ```{r echo=TRUE, Bivariate_Plots11}
 ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
@@ -334,19 +344,26 @@ ggplot(wine_quality, aes(x = citric.acid, y = log(fixed.acidity))) +
   stat_smooth(method = "lm")
 ```
 
-With the linear model overlayed over the original plot the cure is no longer perceptable.
+With the linear model overlayed over the original plot the cure is no longer perceptable. The log(fixed.acidity) plot may have slightly normalized the distribution linearly but it is very difficult to tell.
+
+At the outset I was expecting alcohol and residual.sugars to be more related than their correllation indicates. Let's have a look at the plot anyway.
+
+```{r echo=TRUE, Bivariate_Plots10}
+ggplot(wine_quality, aes(x = alcohol, y = residual.sugar)) +
+  geom_point(alpha = 1/20, position = position_jitter(0.01))
+```
+
+Here we are reminded of the results from the univariate anaylsis of residual.sugar - most wine having a measurement of 2 g\L.
 
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
 There seem to be two variable that are driving the varience in the quality variable. Higher acohol content tends to produce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me. 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
-There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related.
-I found there was a postitive relationship between fixed.acidity and citric.acid. 
+There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related. Chlorides and Sulfates seems to have a relationship but I am not sure if it is significant. I was expecting alcohol and residual.sugar to have some relationship but they do not. A couple times in areas of certain scatter plots where the density was lower there appeared to be a visually identifiable trend but by adding an additonal visual element to the plot (a linear smoother) these trends usually stopped being perceptable.
 
 ### What was the strongest relationship you found?
-
-
+The strongest relationship I analyzed was between volatile.acidity and citric.acid. This relationship has a -0.6 pearson correlation coeffecient.
 
 # Multivariate Plots Section
 
@@ -393,6 +410,8 @@ ggpairs(wine_quality,
         lower = list(continuous = ggscatalpha), 
         diag = list(continuous = ggdensalpha))
 ```
+
+
 
 ```{r echo=FALSE, Multivariate_Plots5}
 
