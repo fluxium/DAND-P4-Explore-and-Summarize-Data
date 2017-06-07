@@ -353,7 +353,7 @@ ggplot(wine_quality, aes(x = alcohol, y = residual.sugar)) +
   geom_point(alpha = 1/20, position = position_jitter(0.01))
 ```
 
-Here we are reminded of the results from the univariate anaylsis of residual.sugar - most wine having a measurement of 2 g\L.
+Here we are reminded of the results from the univariate anaylsis of residual.sugar - most wine having a measurement of 2 g/L.
 
 # Bivariate Analysis
 
@@ -400,7 +400,6 @@ ggpairs(wine_quality,
         diag = list(continuous = ggdensalpha))
 ```
 
-Surprisingly, it would seem like higher sulphates has a positive effect on the wine's rating.
  
 ```{r echo=FALSE, Multivariate_Plots4}
 wq.names.alcohol <- c("alcohol", "residual.sugar", "density")
@@ -414,10 +413,18 @@ ggpairs(wine_quality,
 
 
 ```{r echo=FALSE, Multivariate_Plots5}
-
+ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
+  geom_point() +
+  facet_wrap(~quality)
 ```
 
 
+
+```{r echo=FALSE, Multivariate_Plots6}
+ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
+  geom_point() +
+  facet_wrap(~quality)
+```
 
 
 # Multivariate Analysis
