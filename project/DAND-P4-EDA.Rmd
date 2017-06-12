@@ -421,9 +421,16 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
 
 
 ```{r echo=FALSE, Multivariate_Plots6}
-ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
+alcohol.mean <- mean(wine_quality$alcohol)
+alcohol.sd <- sd(wine_quality$alcohol)
+
+# Factors the alcohol variable in to Low, Medium, and High buckets for coloring plots
+wine_quality$alcohol.buckets <- cut(wine_quality$alcohol, c(0, alcohol.mean - alcohol.sd, alcohol.mean + alcohol.sd, max(wine_quality$alcohol)), labels = c("Low", "Medium", "High"))
+
+ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.buckets)) +
   geom_point() +
-  facet_wrap(~quality)
+  facet_wrap(~quality) #+
+  #stat_smooth(method = "lm")
 ```
 
 
