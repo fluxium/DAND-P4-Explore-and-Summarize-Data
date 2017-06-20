@@ -98,7 +98,8 @@ This plot sheds a bit of light on where the majority of the citric.acid observat
 Let's take a look at pH
 
 ```{r echo=FALSE, Univariate_Plots9}
-ggplot(data = wine_quality, aes(x = pH)) + geom_density()
+ggplot(data = wine_quality, aes(x = pH)) + 
+  geom_density()
 ```
 
 Most wines in this data set fall between 3.1 and 3.5
@@ -106,15 +107,27 @@ Most wines in this data set fall between 3.1 and 3.5
 Now let's see what the variables for sulphate and related compounds content looks like
 
 ```{r echo=FALSE, Univariate_Plots10}
-ggplot(data = wine_quality, aes(x = free.sulfur.dioxide)) + geom_density()
+ggplot(data = wine_quality, aes(x = free.sulfur.dioxide)) + 
+  geom_density()
+
+ggplot(data = wine_quality, aes(x = log(free.sulfur.dioxide))) + 
+  geom_density()
 ```
 
 ```{r echo=FALSE, Univariate_Plots11}
-ggplot(data = wine_quality, aes(x = total.sulfur.dioxide)) + geom_density()
+ggplot(data = wine_quality, aes(x = total.sulfur.dioxide)) + 
+  geom_density()
+
+ggplot(data = wine_quality, aes(x = log(total.sulfur.dioxide))) + 
+  geom_density()
 ```
 
 ```{r echo=FALSE, Univariate_Plots12}
-ggplot(data = wine_quality, aes(x = sulphates)) + geom_density()
+ggplot(data = wine_quality, aes(x = sulphates)) + 
+  geom_density()
+
+ggplot(data = wine_quality, aes(x = log(sulphates))) + 
+  geom_density()
 ```
 
 All of the sulphate variables seem to have a similar right skew. There seem to be some wines with very high sulphate content relative to the rest of the wines.
@@ -122,7 +135,8 @@ All of the sulphate variables seem to have a similar right skew. There seem to b
 Finally let's see what alcohol and related parameters looks like:
 
 ```{r echo=FALSE, Univariate_Plots13}
-ggplot(data = wine_quality, aes(x = alcohol)) + geom_density()
+ggplot(data = wine_quality, aes(x = alcohol)) + 
+  geom_density()
 ```
 
 Most wines have between 9% and 11% ABV
@@ -146,8 +160,14 @@ ggplot(data = wine_quality, aes(x = density)) + geom_density()
 No surprises here. 
 
 ```{r echo=FALSE, Univariate_Plots15}
-ggplot(aes(x = residual.sugar), data = wine_quality) + geom_density()
+ggplot(aes(x = residual.sugar), data = wine_quality) + 
+  geom_density()
+
+ggplot(aes(x = log(residual.sugar)), data = wine_quality) + 
+  geom_density()
 ```
+
+Most of the wines sampled have around 2 g/L residual.sugar. Plotting the log transformation of this variable inidcates possible lognormal distribution of the variable. 
 
 There are some wines with very high residual sugars; let's zoom in on the mean:
 
@@ -187,9 +207,12 @@ Last but not least - chlorides. This physiochemical measurement didn't fall in t
 ```{r echo=FALSE, Univariate_Plots19}
 ggplot(aes(x = chlorides), data = wine_quality) + 
   geom_density()
+
+ggplot(aes(x = log(chlorides)), data = wine_quality) + 
+  geom_density()
 ```
 
-Very high right skew here. Very few observations outside of the 0.05 to 0.15 range.
+Very high right skew here possibly indicating a lognormal distribution. Plotting log transformed chlorides seems to confirm that. Very few observations outside of the 0.05 to 0.15 range.
 
 # Univariate Analysis
 
@@ -358,7 +381,8 @@ Here we are reminded of the results from the univariate anaylsis of residual.sug
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
-There seem to be two variable that are driving the varience in the quality variable. Higher acohol content tends to produce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me. 
+There seem to be two variable that are driving the varience in the quality variable. Higher acohol content tends to produce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me.
+
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related. Chlorides and Sulfates seems to have a relationship but I am not sure if it is significant. I was expecting alcohol and residual.sugar to have some relationship but they do not. A couple times in areas of certain scatter plots where the density was lower there appeared to be a visually identifiable trend but by adding an additonal visual element to the plot (a linear smoother) these trends usually stopped being perceptable.
 
