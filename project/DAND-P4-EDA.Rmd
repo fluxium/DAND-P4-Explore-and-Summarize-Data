@@ -21,6 +21,8 @@ library(lubridate)
 library(gridExtra)
 library(GGally)
 library(reshape2)
+library(reshape2)
+library(RColorBrewer)
 
 # Load the Data
 wine_quality <- read.csv("../Data/wineQualityReds.csv")
@@ -355,7 +357,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
   geom_point(alpha = 1/10)
 ```
 
-Visually, there seems to be a slight exponential curve. Let's see what log(fixed.acidity) looks like.
+Visually, there seems to be an exponential curve. Let's see what log(fixed.acidity) looks like.
 
 ```{r echo=TRUE, Bivariate_Plots11}
 ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
@@ -367,7 +369,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = log(fixed.acidity))) +
   stat_smooth(method = "lm")
 ```
 
-With the linear model overlayed over the original plot the cure is no longer perceptable. The log(fixed.acidity) plot may have slightly normalized the distribution linearly but it is very difficult to tell.
+With the linear model overlayed over the original plot the cure is no longer perceptable. The log(fixed.acidity) plot may have slightly normalized the distribution linearly but it is very difficult to tell. 
 
 At the outset I was expecting alcohol and residual.sugars to be more related than their correllation indicates. Let's have a look at the plot anyway.
 
@@ -387,7 +389,7 @@ There seem to be two variable that are driving the varience in the quality varia
 There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related. Chlorides and Sulfates seems to have a relationship but I am not sure if it is significant. I was expecting alcohol and residual.sugar to have some relationship but they do not. A couple times in areas of certain scatter plots where the density was lower there appeared to be a visually identifiable trend but by adding an additonal visual element to the plot (a linear smoother) these trends usually stopped being perceptable.
 
 ### What was the strongest relationship you found?
-The strongest relationship I analyzed was between volatile.acidity and citric.acid. This relationship has a -0.6 pearson correlation coeffecient.
+The strongest relationship I analyzed was between fixed.acidty and citric.acid. This relationship has a 0.7 pearson correlation coeffecient.
 
 # Multivariate Plots Section
 
@@ -434,17 +436,25 @@ ggpairs(wine_quality,
         diag = list(continuous = ggdensalpha))
 ```
 
-
-
-```{r echo=FALSE, Multivariate_Plots5}
-ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
-  geom_point() +
-  facet_wrap(~quality)
-```
-
-
+The density plots on the diagonals in the ggpairs plots seem to offer some solid insight so I wanted to try and plot them all at once:
 
 ```{r echo=FALSE, Multivariate_Plots6}
+# https://stackoverflow.com/questions/14623348/how-to-use-facet-to-create-multiple-density-plot-in-ggplot
+# https://stackoverflow.com/questions/18046051/setting-individual-axis-limits-with-facet-wrap-and-scales-free-in-ggplot2
+# New favorite function: reshape2::melt :D
+
+wine_quality.m <- melt(wine_quality, id = c("X", "quality"), measure.vars = c("fixed.acidity", "volatile.acidity", "citric.acid", "residual.sugar", "chlorides", "free.sulfur.dioxide", "total.sulfur.dioxide", "density", "pH", "sulphates", "alcohol"))
+
+ggplot(data = wine_quality.m, aes(x = value)) +
+  geom_density(aes(color = quality)) + 
+  facet_wrap(~variable, scales = "free")
+```
+
+That seems to do the trick. In the fixed.acidity plot we can see quality scores of 7 and 8 have a slightly higher mean. In the volatile.acidity plot higher scores have lower means and lower scores have higher means. For citric.acid measurements higher values produce higher scores. In the pH plot we can see a proxy effect reflected in the results from the other acidity related variables. In the suplphates plot we see our higher scoring wines pulling away from the other having a higher mean sulphate measurements. Finally, the alcohol plot illustrates higher scoring wines have higher alcohol content.
+
+First, I'd like to examine volatile.acidity - citric.acid relationship by alcohol content. I will bucket the alcohol varaible in to "Low", "Medium", and "High". "Low" will be alcohol contents between 0 and -1 standard diviation. "Medium" will contain wines with -1 standard diviation to +1 standard diviation alcohol. "High" will represent +1 standard diviation to the max value of the alcohol variable.
+
+```{r echo=FALSE, Multivariate_Plots5}
 alcohol.mean <- mean(wine_quality$alcohol)
 alcohol.sd <- sd(wine_quality$alcohol)
 
@@ -452,9 +462,23 @@ alcohol.sd <- sd(wine_quality$alcohol)
 wine_quality$alcohol.buckets <- cut(wine_quality$alcohol, c(0, alcohol.mean - alcohol.sd, alcohol.mean + alcohol.sd, max(wine_quality$alcohol)), labels = c("Low", "Medium", "High"))
 
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.buckets)) +
-  geom_point() +
-  facet_wrap(~quality) #+
-  #stat_smooth(method = "lm")
+  geom_point(alpha = 0.3) +
+  facet_wrap(~quality)
+```
+
+Between scores of 5 and 6 we can see the effect of the alcohol variable emmerging. The plots for scores of 5 and 6 have very similar volatile.acidity to citric.acid characteristics, but in the we can see that 6 has several more wines from the 'High' alcohol bucket and fewer from the 'Low' bucket. Examining the highest scores of 7 and 8 we can see the occurance of 'Medium' alcohol bucket observations drop off being replaced with 'High' alcohol obervations. As the score improves we can see that the range of volatile.acidity compresses around the 0.4 measurement. 
+
+
+```{r echo=FALSE, Multivariate_Plots6}
+ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buckets)) +
+  geom_point(alpha = 0.6) +
+  facet_wrap(~quality)
+```
+
+```{r echo=FALSE, Multivariate_Plots7}
+ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
+  #geom_point() +
+  geom_jitter(alpha = 0.5)
 ```
 
 
@@ -490,8 +514,6 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.
 ```{r echo=FALSE, Plot_Three}
 
 ```
-
-
 
 
 ### Description Three
