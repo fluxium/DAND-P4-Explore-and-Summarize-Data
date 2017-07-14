@@ -475,6 +475,8 @@ ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buc
   facet_wrap(~quality)
 ```
 
+
+
 ```{r echo=FALSE, Multivariate_Plots7}
 ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
   #geom_point() +
