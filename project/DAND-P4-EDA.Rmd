@@ -21,8 +21,9 @@ library(lubridate)
 library(gridExtra)
 library(GGally)
 library(reshape2)
-library(reshape2)
 library(RColorBrewer)
+library(scales)
+library(memisc)
 
 # Load the Data
 wine_quality <- read.csv("../Data/wineQualityReds.csv")
@@ -45,7 +46,8 @@ summary(wine_quality$quality)
 Now that I am happy with how quality is looking lets see what it looks like
 
 ```{r echo=FALSE, Univariate_Plots3}
-ggplot(data = wine_quality, aes(x = quality)) + geom_bar(stat = "count") 
+ggplot(data = wine_quality, aes(x = quality)) + 
+  geom_bar(stat = "count") 
 ```
 
 No scores of less than 3. Scores of 3 and 4 are uncommon. 5 or better represents the bulk of the wines.
@@ -67,11 +69,13 @@ Let's see what the variables related to acidity look like.
 For single variable analysis I prefer the density plot since you don't have to be overly concerned tweaking the binwidth.
 
 ```{r echo=FALSE, Univariate_Plots5}
-ggplot(data = wine_quality, aes(x = fixed.acidity)) + geom_density()
+ggplot(data = wine_quality, aes(x = fixed.acidity)) + 
+  geom_density()
 ```
 
 ```{r echo=FALSE, Univariate_Plots6}
-ggplot(data = wine_quality, aes(x = volatile.acidity)) + geom_density()
+ggplot(data = wine_quality, aes(x = volatile.acidity)) + 
+  geom_density()
 ```
 
 There could be a bimodal distribution happening here with volatile.acidity.
@@ -156,7 +160,8 @@ ggplot(wine_quality, aes(x=1, y=alcohol)) +
 Half of the observations are between 9.5% to 11.1% ABV
 
 ```{r echo=FALSE, Univariate_Plots14}
-ggplot(data = wine_quality, aes(x = density)) + geom_density()
+ggplot(data = wine_quality, aes(x = density)) + 
+  geom_density()
 ```
 
 No surprises here. 
@@ -383,7 +388,7 @@ Here we are reminded of the results from the univariate anaylsis of residual.sug
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
-There seem to be two variable that are driving the varience in the quality variable. Higher acohol content tends to produce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me.
+There seem to be two variable that are driving theo pr varience in the quality variable. Higher acohol content tends toduce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me.
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related. Chlorides and Sulfates seems to have a relationship but I am not sure if it is significant. I was expecting alcohol and residual.sugar to have some relationship but they do not. A couple times in areas of certain scatter plots where the density was lower there appeared to be a visually identifiable trend but by adding an additonal visual element to the plot (a linear smoother) these trends usually stopped being perceptable.
@@ -483,6 +488,20 @@ ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
   geom_jitter(alpha = 0.5)
 ```
 
+```{r echo=FALSE, Multivariate_Plots8}
+m1 <- lm(quality ~ alcohol, data = wine_quality)
+m2 <- update(m1, ~ . + volatile.acidity)
+m3 <- update(m2, ~ . + fixed.acidity)
+m4 <- update(m3, ~ . + sulphates)
+m4.1 <- update(m4, ~ . + density)
+m4.2 <- update(m4.1, ~ . + pH)
+m5 <- update(m4.2, ~ . + total.sulfur.dioxide)
+m6 <- update(m5, ~ . + free.sulfur.dioxide)
+m7 <- update(m6, ~ . + residual.sugar)
+m8 <- update(m7, ~ . + chlorides)
+m9 <- update(m8, ~ . + citric.acid)
+mtable(m1, m2, m3, m4, m4.1, m4.2, m5, m6, m7, m8, m9)
+```
 
 # Multivariate Analysis
 
@@ -498,7 +517,13 @@ ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
 
 ### Plot One
 ```{r echo=FALSE, Plot_One}
-
+ggplot(data = wine_quality, aes(x = quality)) + 
+  geom_bar(stat = "count", fill = "firebrick") +
+  labs(title = "Distribution of Quality Scores", x = "Quality Score", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5), 
+        axis.title.x = element_text(size = 14), 
+        axis.title.y = element_text(size = 14),
+        title = element_text(size = 16))
 ```
 
 ### Description One
@@ -506,7 +531,18 @@ ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
-
+# http://stackoverflow.com/questions/3989987/joining-means-on-a-boxplot-with-a-line-ggplot2
+# https://stackoverflow.com/questions/40675778/center-plot-title-in-ggplot2
+ggplot(wine_quality, aes(x = quality, y = alcohol)) +
+  geom_boxplot(fill = "firebrick") +
+  # aes(group = 1) added to line plot forces stat_summary to be scoped to pre-aggregated data so line can connect means from each group
+  stat_summary(aes(group = 1), fun.y = mean, geom = "line", show.legend = FALSE) +
+  stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE) +
+  labs(title = "Alcohol Content by Quality Score", x = "Quality Score", y = "Alcohol (%ABV)") +
+  theme(plot.title = element_text(hjust = 0.5), 
+        axis.title.x = element_text(size = 14), 
+        axis.title.y = element_text(size = 14),
+        title = element_text(size = 16))
 ```
 
 ### Description Two
