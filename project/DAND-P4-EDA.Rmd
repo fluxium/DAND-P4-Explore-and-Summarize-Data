@@ -457,7 +457,7 @@ ggplot(data = wine_quality.m, aes(x = value)) +
 
 That seems to do the trick. In the fixed.acidity plot we can see quality scores of 7 and 8 have a slightly higher mean. In the volatile.acidity plot higher scores have lower means and lower scores have higher means. For citric.acid measurements higher values produce higher scores. In the pH plot we can see a proxy effect reflected in the results from the other acidity related variables. In the suplphates plot we see our higher scoring wines pulling away from the other having a higher mean sulphate measurements. Finally, the alcohol plot illustrates higher scoring wines have higher alcohol content.
 
-First, I'd like to examine volatile.acidity - citric.acid relationship by alcohol content. I will bucket the alcohol varaible in to "Low", "Medium", and "High". "Low" will be alcohol contents between 0 and -1 standard diviation. "Medium" will contain wines with -1 standard diviation to +1 standard diviation alcohol. "High" will represent +1 standard diviation to the max value of the alcohol variable.
+I'd like to examine each of the relationships I have discovered thus far with a focus on conditioning on quality and bucketed alcohol content. I will bucket the alcohol varaible in to "Low", "Medium", and "High". "Low" will be alcohol contents between 0 and -1 standard diviation. "Medium" will contain wines with -1 standard diviation to +1 standard diviation alcohol. "High" will represent +1 standard diviation to the max value of the alcohol variable.
 
 ```{r echo=FALSE, Multivariate_Plots5}
 alcohol.mean <- mean(wine_quality$alcohol)
@@ -473,14 +473,32 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.
 
 Between scores of 5 and 6 we can see the effect of the alcohol variable emmerging. The plots for scores of 5 and 6 have very similar volatile.acidity to citric.acid characteristics, but in the we can see that 6 has several more wines from the 'High' alcohol bucket and fewer from the 'Low' bucket. Examining the highest scores of 7 and 8 we can see the occurance of 'Medium' alcohol bucket observations drop off being replaced with 'High' alcohol obervations. As the score improves we can see that the range of volatile.acidity compresses around the 0.4 measurement. 
 
+```{r echo=FALSE, Multivariate_Plots5.1}
 
-```{r echo=FALSE, Multivariate_Plots6}
-ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buckets)) +
-  geom_point(alpha = 0.6) +
+ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.buckets)) +
+  stat_smooth(aes(group = alcohol.buckets), method = "lm") +
+  geom_point(alpha = 0.1) +
   facet_wrap(~quality)
 ```
 
+Overlaying a linear model conditioned on alcohol.buckets we can see the slopes are all roughly similar for the scores with the most data available, 5 through 7. The effect that alcohol has on the volatile.acidity ~ citric.acid relationship is minor.
 
+```{r echo=FALSE, Multivariate_Plots6}
+ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buckets)) +
+  geom_point(alpha = 0.4) +
+  facet_wrap(~quality)
+```
+
+Seems like the fixed.acidity ~ citric.acid relationship is fairly consistent across the quality scores.
+
+```{r echo=FALSE, Multivariate_Plots6.1}
+ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buckets)) +
+  stat_smooth(aes(group = alcohol.buckets), method = "lm") +
+  geom_point(alpha = 0.1) +
+  facet_wrap(~quality)
+```
+
+The linear model exposes a few hidden trends that were burried in overplotting. Between scores of 5 to 7 the fixed.acidity ~ citric.acid relationship condtioned on alcohol.buckets changes slightly. The facet for quality scores of 5 could be skewing the slope of the "High" alcohol bucket due to sparse observations with those parameters. It is interesting that there is a slight fixed.acidity offset in the slopes for the alcohol buckets in several of the facets.
 
 ```{r echo=FALSE, Multivariate_Plots7}
 ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
@@ -488,8 +506,19 @@ ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
   geom_jitter(alpha = 0.5)
 ```
 
+The sulphates ~ quality and alcohol ~ quality positive relationships can be observed here.
+
+```{r echo=FALSE, Multivariate_Plots7}
+ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
+  #geom_point() +
+  geom_jitter(alpha = 0.2) +
+  stat_smooth(aes(group = alcohol.buckets), method = "lm")
+```
+
+The sulphate ~ quality relationship seems to be slightly different for the "Low" alcohol bucket. For the other alcohol buckets the relationship is consistent, the slopes are roughly equal with the "High" bucket having slightly lower sulphate measurements.
+
 ```{r echo=FALSE, Multivariate_Plots8}
-m1 <- lm(quality ~ alcohol, data = wine_quality)
+m1 <- lm(quality ~ alcohol, data = wq)
 m2 <- update(m1, ~ . + volatile.acidity)
 m3 <- update(m2, ~ . + fixed.acidity)
 m4 <- update(m3, ~ . + sulphates)
@@ -506,6 +535,8 @@ mtable(m1, m2, m3, m4, m4.1, m4.2, m5, m6, m7, m8, m9)
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+In this section I was primarily focused on how some of the correlated physiochemial variables behaved when conditioned on quality and alcohol.buckets. alcohol.buckets was prepared using the alcohol variable cut using the standard deviation as boundries. 
 
 ### Were there any interesting or surprising interactions between features?
 
@@ -527,7 +558,7 @@ ggplot(data = wine_quality, aes(x = quality)) +
 ```
 
 ### Description One
-
+The majority of the wine scored 6 or greater. There are not wines that received extremely poor or extremely good ratings. Most wines were found to be of average quality, scoring a 5 or 6.
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
@@ -546,16 +577,24 @@ ggplot(wine_quality, aes(x = quality, y = alcohol)) +
 ```
 
 ### Description Two
-
+The alchohol content of a wine seems to have a relationship to its score. Higher alcohol contents tending to product higher scoring wines. If the taste testers were made aware of the alcohol content in the wine they were tasting, this could be a significant source of bias.
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
-
+ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
+  geom_jitter(alpha = 0.2) +
+  stat_smooth(aes(group = alcohol.buckets), method = "lm") +
+  labs(title = "Sulphates by Quality Score", subtitle = "Conditioned on Bucketed Alcohol Content" , x = "Quality Score", y = "Sulphates", color = "Alcohol") +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.title.x = element_text(size = 14), 
+        axis.title.y = element_text(size = 14),
+        title = element_text(size = 16))
 ```
 
 
 ### Description Three
-
+This plot illustrates the slight positive relationship between Sulphate content and the wine's quality score. For lower alcohol content wines the relationship is blunted slightly. For the "Medium" and "High" alcohol buckets the relationship is consistent, the slopes are roughly equal with the "High" bucket having slightly lower sulphate measurements.
 ------
 
 # Reflection
