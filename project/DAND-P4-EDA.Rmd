@@ -31,6 +31,8 @@ wine_quality <- read.csv("../Data/wineQualityReds.csv")
 ```
 
 # Univariate Plots Section
+
+Let's have a look at some summary statistics of the variables we have to work with
 ```{r echo=TRUE, Univariate_Plots1}
 summary(wine_quality)
 ```
@@ -66,7 +68,7 @@ Now let's look at some of the other variables that could contribute to the quali
 
 Let's see what the variables related to acidity look like.
 
-For single variable analysis I prefer the density plot since you don't have to be overly concerned tweaking the binwidth.
+For single variable analysis I prefer the density plot since you don't have to be overly concerned tweaking the bin width.
 
 ```{r echo=FALSE, Univariate_Plots5}
 ggplot(data = wine_quality, aes(x = fixed.acidity)) + 
@@ -78,7 +80,7 @@ ggplot(data = wine_quality, aes(x = volatile.acidity)) +
   geom_density()
 ```
 
-There could be a bimodal distribution happening here with volatile.acidity.
+There could be a bi-modal distribution happening here with volatile.acidity.
 
 Now for citric.acid
 
@@ -110,7 +112,7 @@ ggplot(data = wine_quality, aes(x = pH)) +
 
 Most wines in this data set fall between 3.1 and 3.5
 
-Now let's see what the variables for sulphate and related compounds content looks like
+Now let's see what the variables for sulfate and related compounds content looks like
 
 ```{r echo=FALSE, Univariate_Plots10}
 ggplot(data = wine_quality, aes(x = free.sulfur.dioxide)) + 
@@ -136,7 +138,7 @@ ggplot(data = wine_quality, aes(x = log(sulphates))) +
   geom_density()
 ```
 
-All of the sulphate variables seem to have a similar right skew. There seem to be some wines with very high sulphate content relative to the rest of the wines.
+All of the sulfate variables seem to have a similar right skew. There seem to be some wines with very high sulfate content relative to the rest of the wines.
 
 Finally let's see what alcohol and related parameters looks like:
 
@@ -174,7 +176,7 @@ ggplot(aes(x = log(residual.sugar)), data = wine_quality) +
   geom_density()
 ```
 
-Most of the wines sampled have around 2 g/L residual.sugar. Plotting the log transformation of this variable inidcates possible lognormal distribution of the variable. 
+Most of the wines sampled have around 2 g/L residual.sugar. Plotting the log transformation of this variable indicates possible log-normal distribution of the variable. 
 
 There are some wines with very high residual sugars; let's zoom in on the mean:
 
@@ -209,7 +211,7 @@ Box plot confirms what I was seeing in the density plot - most of the falling in
 
 Looks like most of the red wine sampled fell in the 9% to 11% ABV range. Alcohol volumes of 9.5% and 10.9% seem to more common. The plot of the density variable looks almost too perfectly normally distributed. It does make sense since there aren't many wines with a very high alcohol content or very high residual sugars. I was expecting the alcohol and residual sugar plots to appear very similar. The relationship between these two variables must be more complex than I expected.
 
-Last but not least - chlorides. This physiochemical measurement didn't fall in to any of the other logical groupings so it has been plotted on it's own.
+Last but not least - chlorides. This physio-chemical measurement didn't fall in to any of the other logical groupings so it has been plotted on it's own.
 
 ```{r echo=FALSE, Univariate_Plots19}
 ggplot(aes(x = chlorides), data = wine_quality) + 
@@ -219,7 +221,7 @@ ggplot(aes(x = log(chlorides)), data = wine_quality) +
   geom_density()
 ```
 
-Very high right skew here possibly indicating a lognormal distribution. Plotting log transformed chlorides seems to confirm that. Very few observations outside of the 0.05 to 0.15 range.
+Very high right skew here possibly indicating a log-normal distribution. Plotting log transformed chlorides seems to confirm that. Very few observations outside of the 0.05 to 0.15 range.
 
 # Univariate Analysis
 
@@ -230,7 +232,7 @@ str(wine_quality)
 There are 1599 red wines in this data set each with measurements of 11 of their physio-chemical properties and a sensory measurement of quality. The quality variable is the median of at least 3 taste tests by wine experts. I have chosen to make quality and ordered factor to reflect the specification the researchers used when collecting these data - the higher the number, the better the wine.
 
 ### What is/are the main feature(s) of interest in your dataset?
-The data set has several related groups of variables. With a view to predicting a quality rating one might consider the primary flavor or aromatic factors such as acidity (fixed.acidity, volatile.acidity, citric.acid) or sweetness (residual.sugars). The data set provides other measurements of interest. I am particularly interested in discovering if the group of variables for amounts of sulfur containing compounds (free.sulfur.dioxide, total.sulfur.dioxide, sulphates) has any effect on the quality score.
+The data set has several related groups of variables. With a view to predicting a quality rating one might consider the primary flavor or aromatic factors such as acidity (fixed.acidity, volatile.acidity, citric.acid) or sweetness (residual.sugars). The data set provides other measurements of interest. I am particularly interested in discovering if the group of variables for amounts of sulfur containing compounds (free.sulfur.dioxide, total.sulfur.dioxide, sulfates) has any effect on the quality score.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 I suspect that there might be multicolinearity in this data since often times the presence of higher acidity or sugars can alter ones perception of other compounds. I plan to investigate the how acidity and higher sugar content work in conjunction with the sulfur containing compound to effect the quality rating.
@@ -244,7 +246,7 @@ Some of the distributions were unexpected but not bizarre in any way.
 
 # Bivariate Plots Section
 
-What are the driving corellations?
+What are the driving correlations?
 
 ```{r echo=TRUE, Bivariate_Plots0}
 # https://briatte.github.io/ggcorr/
@@ -258,7 +260,7 @@ ggcorr(wq, label = TRUE, hjust = 0.9, layout.exp = 2)
 ggcorr(wq, nbreaks = 3, label = TRUE, hjust = 0.9, layout.exp = 2)
 ```
 
-Seeing this correllation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. The alcohol variable seems to explain about substantial amount of the variance in the quality variable. volatile.acidity has fairly high negative correllation to the quality variable. Not surprised about that. Aceitic acid vapor is not what most people are looking for when they take the first sip. I am curious about the slightly elevated correllation of sulphates and the quality variable. Despite being evident during the univariate exploration, I am still a little surprised by the 0 values for residual.sugar for alcohol and quality.
+Seeing this correlation plot I am curious if the taste testers were aware of the wine's alcohol content during tasting. If so, I would be concerned that this is a source of bias in these data. The alcohol variable seems to explain about substantial amount of the variance in the quality variable. volatile.acidity has fairly high negative correlation to the quality variable. Not surprised about that. Acetic acid vapor is not what most people are looking for when they take the first sip. I am curious about the slightly elevated correlation of sulfates and the quality variable. Despite being evident during the uni-variate exploration, I am still a little surprised by the 0 values for residual.sugar for alcohol and quality.
 
 ```{r echo=TRUE, Bivariate_Plots1}
 ggplot(wine_quality, aes(x = quality, y = alcohol)) +
@@ -276,13 +278,13 @@ ggplot(wine_quality, aes(x = quality, y = alcohol)) +
   stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE) 
 ```
 
-That's better. With the box plot you can the trend from the scatter plot more clearly. Most of the lower scores tend to have an alcohol content around 10. Scores of 5 are densly packed around the median with several outliers, some of which are extreme. Starting with scores of 6 and above there seems to be an upward trend in the mean alcohol content. To keep this in prespective I want to remind myself how many observations fall in to each of the scores. Adding the mean marker m and a connecting line makes the tendancy in these data clearer.
+That's better. With the box plot you can the trend from the scatter plot more clearly. Most of the lower scores tend to have an alcohol content around 10. Scores of 5 are densely packed around the median with several outliers, some of which are extreme. Starting with scores of 6 and above there seems to be an upward trend in the mean alcohol content. To keep this in perspective I want to remind myself how many observations fall in to each of the scores. Adding the mean marker m and a connecting line makes the tendency in these data clearer.
 
 ```{r echo=TRUE, Bivariate_Plots3}
 summary(wine_quality$quality)
 ```
 
-Seeing that this trend presentes itself over more than half of the observations is some additional supporting evidence to the correlation score alcohol and quality have.
+Seeing that this trend presents itself over more than half of the observations is some additional supporting evidence to the correlation score alcohol and quality have.
 
 Now for the next variable that has a higher correlation to quality, volatile.acidity
 
@@ -295,9 +297,9 @@ ggplot(wine_quality, aes(x = quality, y = volatile.acidity)) +
   stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE) 
 ```
 
-We can see the the negative correllation clearly here. The IQR is compressing as the quality improves. There is an overall negative trend in volatile.acidity as the quality increases.
+We can see the the negative correlation clearly here. The IQR is compressing as the quality improves. There is an overall negative trend in volatile.acidity as the quality increases.
 
-Even though the effect of sulphates on quality doesn't rank as highly as some of the other variables, I still want to examine it.
+Even though the effect of sulfates on quality doesn't rank as highly as some of the other variables, I still want to examine it.
 
 ```{r echo=TRUE, Bivariate_Plots5}
 # http://stackoverflow.com/questions/3989987/joining-means-on-a-boxplot-with-a-line-ggplot2
@@ -308,16 +310,16 @@ ggplot(wine_quality, aes(x = quality, y = sulphates)) +
   stat_summary(fun.y = mean, geom = "point", shape = "µ", size = 2, show.legend = FALSE)
 ```
 
-It would seem that the wines that received a higher score tend to have higher sulphate levels.
+It would seem that the wines that received a higher score tend to have higher sulfate levels.
 
-The next interesting correllation from the inital corellation plot I want to examine is sulphates by chlorides.
+The next interesting correlation from the initial correlation plot I want to examine is sulfates by chlorides.
 
 ```{r echo=TRUE, Bivariate_Plots6}
 ggplot(wine_quality, aes(x = sulphates, y = chlorides)) +
   geom_point(alpha = 1/15)
 ```
 
-For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulphates except for having the bulk of the values over a slightly larger range. There are observations where the suphate measurement is high and the corresponding chloride measurement is low or high. There are no observations where the suphate measurement is low and the chloride measurement is exteme. I don't think this is a very meanful correllation.
+For the majority of the wines sampled the amount of chlorides is fairly consistent except of a few moderate and extreme cases. Sames goes for sulfates except for having the bulk of the values over a slightly larger range. There are observations where the sulfate measurement is high and the corresponding chloride measurement is low or high. There are no observations where the sulfate measurement is low and the chloride measurement is extreme. I don't think this is a very meaningful correlation.
 
 Let's see what a linear model looks like on top of these data.
 
@@ -336,7 +338,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
   geom_point(alpha = 1/10)
 ```
 
-There is a wide range of volatile.acidity values for each citric.acid measurement. There does seems to be a negative correllation here but the variance would be quite high. The bands of common citric.acid measurements (0.0, 0.24, and 0.49) that were noted during the univariate exploration are visible here. Visually, it seems that beyond citric.acid measurements of 0.49 the trend reverses and begins upward. 
+There is a wide range of volatile.acidity values for each citric.acid measurement. There does seems to be a negative correlation here but the variance would be quite high. The bands of common citric.acid measurements (0.0, 0.24, and 0.49) that were noted during the uni-variate exploration are visible here. Visually, it seems that beyond citric.acid measurements of 0.49 the trend reverses and begins upward. 
 
 ```{r echo=TRUE, Bivariate_Plots8}
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
@@ -344,7 +346,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
   scale_x_continuous(limits = c(0.3, 1.0), breaks = seq(0.3, 1.0, 0.05))
 ```
 
-Acctually, the trend seems to be fairly flat from around citric.acid measurements > 0.35.
+Actually, the trend seems to be fairly flat from around citric.acid measurements > 0.35.
 
 ```{r echo=TRUE, Bivariate_Plots9}
 ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
@@ -353,9 +355,9 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity)) +
   stat_smooth(method = "lm")
 ```
 
-Superimposing a linear model confirms the tendancy is approaching flat but still slightly negative.
+Superimposing a linear model confirms the tendency is approaching flat but still slightly negative.
 
-The fixed.acidity and citric.acid measurements appear to have a very strong correllation. I was going to ignore this relationship until I read the description of each of the variables again. I was under the impression that the fixed.acidity measurement was a measurement of all acidity except aecetic acid. Since this is not the case let's investigate this relationship.
+The fixed.acidity and citric.acid measurements appear to have a very strong correlation. I was going to ignore this relationship until I read the description of each of the variables again. I was under the impression that the fixed.acidity measurement was a measurement of all acidity except acetic acid. Since this is not the case let's investigate this relationship.
 
 ```{r echo=TRUE, Bivariate_Plots10}
 ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity)) +
@@ -374,27 +376,27 @@ ggplot(wine_quality, aes(x = citric.acid, y = log(fixed.acidity))) +
   stat_smooth(method = "lm")
 ```
 
-With the linear model overlayed over the original plot the cure is no longer perceptable. The log(fixed.acidity) plot may have slightly normalized the distribution linearly but it is very difficult to tell. 
+With the linear model overlay over the original plot the cure is no longer perceptible. The log(fixed.acidity) plot may have slightly normalized the distribution linearly but it is very difficult to tell. 
 
-At the outset I was expecting alcohol and residual.sugars to be more related than their correllation indicates. Let's have a look at the plot anyway.
+At the outset I was expecting alcohol and residual.sugars to be more related than their correlation indicates. Let's have a look at the plot anyway.
 
-```{r echo=TRUE, Bivariate_Plots10}
+```{r echo=TRUE, Bivariate_Plots12}
 ggplot(wine_quality, aes(x = alcohol, y = residual.sugar)) +
   geom_point(alpha = 1/20, position = position_jitter(0.01))
 ```
 
-Here we are reminded of the results from the univariate anaylsis of residual.sugar - most wine having a measurement of 2 g/L.
+Here we are reminded of the results from the uni-variate analysis of residual.sugar - most wine having a measurement of 2 g/L.
 
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
-There seem to be two variable that are driving theo pr varience in the quality variable. Higher acohol content tends toduce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulphate measurements have a mild effect on the quality score. This was something unexpected for me.
+There seem to be two variable that are driving the variance in the quality variable. Higher alcohol content tends to produce better scores. Lower volatile.acidity tends to produce higher scores. There were some other notable and surprising relationships. The sulfate measurements have a mild effect on the quality score. This was something unexpected for me.
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
-There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related. Chlorides and Sulfates seems to have a relationship but I am not sure if it is significant. I was expecting alcohol and residual.sugar to have some relationship but they do not. A couple times in areas of certain scatter plots where the density was lower there appeared to be a visually identifiable trend but by adding an additonal visual element to the plot (a linear smoother) these trends usually stopped being perceptable.
+There is a moderate, negative relationship between the volatile.acidity measurements and the citric.acid measurements. I wasn't expecting these two measurements to be related. Chlorides and Sulfates seems to have a relationship but I am not sure if it is significant. I was expecting alcohol and residual.sugar to have some relationship but they do not. A couple times in areas of certain scatter plots where the density was lower there appeared to be a visually identifiable trend but by adding an additional visual element to the plot (a linear smoother) these trends usually stopped being perceptible.
 
 ### What was the strongest relationship you found?
-The strongest relationship I analyzed was between fixed.acidty and citric.acid. This relationship has a 0.7 pearson correlation coeffecient.
+The strongest relationship I analyzed was between fixed.acidity and citric.acid. This relationship has a 0.7 Pearson correlation coefficient.
 
 # Multivariate Plots Section
 
@@ -455,9 +457,9 @@ ggplot(data = wine_quality.m, aes(x = value)) +
   facet_wrap(~variable, scales = "free")
 ```
 
-That seems to do the trick. In the fixed.acidity plot we can see quality scores of 7 and 8 have a slightly higher mean. In the volatile.acidity plot higher scores have lower means and lower scores have higher means. For citric.acid measurements higher values produce higher scores. In the pH plot we can see a proxy effect reflected in the results from the other acidity related variables. In the suplphates plot we see our higher scoring wines pulling away from the other having a higher mean sulphate measurements. Finally, the alcohol plot illustrates higher scoring wines have higher alcohol content.
+That seems to do the trick. In the fixed.acidity plot we can see quality scores of 7 and 8 have a slightly higher mean. In the volatile.acidity plot higher scores have lower means and lower scores have higher means. For citric.acid measurements higher values produce higher scores. In the pH plot we can see a proxy effect reflected in the results from the other acidity related variables. In the sulfate plot we see our higher scoring wines pulling away from the other having a higher mean sulfate measurements. Finally, the alcohol plot illustrates higher scoring wines have higher alcohol content.
 
-I'd like to examine each of the relationships I have discovered thus far with a focus on conditioning on quality and bucketed alcohol content. I will bucket the alcohol varaible in to "Low", "Medium", and "High". "Low" will be alcohol contents between 0 and -1 standard diviation. "Medium" will contain wines with -1 standard diviation to +1 standard diviation alcohol. "High" will represent +1 standard diviation to the max value of the alcohol variable.
+I'd like to examine each of the relationships I have discovered thus far with a focus on conditioning on quality and bucketed alcohol content. I will bucket the alcohol variable in to "Low", "Medium", and "High". "Low" will be alcohol contents between 0 and -1 standard deviation. "Medium" will contain wines with -1 standard deviation to +1 standard deviation alcohol. "High" will represent +1 standard deviation to the max value of the alcohol variable.
 
 ```{r echo=FALSE, Multivariate_Plots5}
 alcohol.mean <- mean(wine_quality$alcohol)
@@ -471,7 +473,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.
   facet_wrap(~quality)
 ```
 
-Between scores of 5 and 6 we can see the effect of the alcohol variable emmerging. The plots for scores of 5 and 6 have very similar volatile.acidity to citric.acid characteristics, but in the we can see that 6 has several more wines from the 'High' alcohol bucket and fewer from the 'Low' bucket. Examining the highest scores of 7 and 8 we can see the occurance of 'Medium' alcohol bucket observations drop off being replaced with 'High' alcohol obervations. As the score improves we can see that the range of volatile.acidity compresses around the 0.4 measurement. 
+Between scores of 5 and 6 we can see the effect of the alcohol variable emerging. The plots for scores of 5 and 6 have very similar volatile.acidity to citric.acid characteristics, but in the we can see that 6 has several more wines from the 'High' alcohol bucket and fewer from the 'Low' bucket. Examining the highest scores of 7 and 8 we can see the occurrence of 'Medium' alcohol bucket observations drop off being replaced with 'High' alcohol observations. As the score improves we can see that the range of volatile.acidity compresses around the 0.4 measurement. 
 
 ```{r echo=FALSE, Multivariate_Plots5.1}
 
@@ -483,7 +485,7 @@ ggplot(wine_quality, aes(x = citric.acid, y = volatile.acidity, color = alcohol.
 
 Overlaying a linear model conditioned on alcohol.buckets we can see the slopes are all roughly similar for the scores with the most data available, 5 through 7. The effect that alcohol has on the volatile.acidity ~ citric.acid relationship is minor.
 
-```{r echo=FALSE, Multivariate_Plots6}
+```{r echo=FALSE, Multivariate_Plots6.1}
 ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buckets)) +
   geom_point(alpha = 0.4) +
   facet_wrap(~quality)
@@ -491,14 +493,14 @@ ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buc
 
 Seems like the fixed.acidity ~ citric.acid relationship is fairly consistent across the quality scores.
 
-```{r echo=FALSE, Multivariate_Plots6.1}
+```{r echo=FALSE, Multivariate_Plots6.2}
 ggplot(wine_quality, aes(x = citric.acid, y = fixed.acidity, color = alcohol.buckets)) +
   stat_smooth(aes(group = alcohol.buckets), method = "lm") +
   geom_point(alpha = 0.1) +
   facet_wrap(~quality)
 ```
 
-The linear model exposes a few hidden trends that were burried in overplotting. Between scores of 5 to 7 the fixed.acidity ~ citric.acid relationship condtioned on alcohol.buckets changes slightly. The facet for quality scores of 5 could be skewing the slope of the "High" alcohol bucket due to sparse observations with those parameters. It is interesting that there is a slight fixed.acidity offset in the slopes for the alcohol buckets in several of the facets.
+The linear model exposes a few hidden trends that were buried in over-plotting. Between scores of 5 to 7 the fixed.acidity ~ citric.acid relationship conditioned on alcohol.buckets changes slightly. The facet for quality scores of 5 could be skewing the slope of the "High" alcohol bucket due to sparse observations with those parameters. It is interesting that there is a slight fixed.acidity offset in the slopes for the alcohol buckets in several of the facets.
 
 ```{r echo=FALSE, Multivariate_Plots7}
 ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
@@ -506,18 +508,20 @@ ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
   geom_jitter(alpha = 0.5)
 ```
 
-The sulphates ~ quality and alcohol ~ quality positive relationships can be observed here.
+The sulfates ~ quality and alcohol ~ quality positive relationships can be observed here.
 
-```{r echo=FALSE, Multivariate_Plots7}
+```{r echo=FALSE, Multivariate_Plots8}
 ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
   #geom_point() +
   geom_jitter(alpha = 0.2) +
   stat_smooth(aes(group = alcohol.buckets), method = "lm")
 ```
 
-The sulphate ~ quality relationship seems to be slightly different for the "Low" alcohol bucket. For the other alcohol buckets the relationship is consistent, the slopes are roughly equal with the "High" bucket having slightly lower sulphate measurements.
+The sulfate ~ quality relationship seems to be slightly different for the "Low" alcohol bucket. For the other alcohol buckets the relationship is consistent, the slopes are roughly equal with the "High" bucket having slightly lower sulfate measurements.
 
-```{r echo=FALSE, Multivariate_Plots8}
+Let's see what kind of predictive power the features in this data set have.
+
+```{r echo=FALSE, Multivariate_Plots9}
 m1 <- lm(quality ~ alcohol, data = wq)
 m2 <- update(m1, ~ . + volatile.acidity)
 m3 <- update(m2, ~ . + fixed.acidity)
@@ -529,20 +533,31 @@ m6 <- update(m5, ~ . + free.sulfur.dioxide)
 m7 <- update(m6, ~ . + residual.sugar)
 m8 <- update(m7, ~ . + chlorides)
 m9 <- update(m8, ~ . + citric.acid)
+
 mtable(m1, m2, m3, m4, m4.1, m4.2, m5, m6, m7, m8, m9)
+
+ggplot(data = wq, aes(x = wq$quality, y = m9$residuals)) +
+  geom_point()
+
 ```
+
+Each variable was added to the linear model on by one to assess the impact on the model's score. mtable provides a convenient output to compare the impact of each additional feature to the model. We can see that the score of this model is quite poor. The residual plot illustrates it clearly. It is understandable that score of 5 and 6 are generally closer to 0 since most of the wines in the data set have quality scores in that range. Despite that the linear model's output varies far too wildly to be useful. Additional features would need to be considered to product a more accurate model. Region and economic data would be a good start.
+
 
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
-In this section I was primarily focused on how some of the correlated physiochemial variables behaved when conditioned on quality and alcohol.buckets. alcohol.buckets was prepared using the alcohol variable cut using the standard deviation as boundries. 
+In this section I was primarily focused on how some of the correlated physio-chemical variables behaved when conditioned on quality and alcohol.buckets. alcohol.buckets was prepared using the alcohol variable cut using the standard deviation as boundaries. The relationships that were reexamined from this perspective were fixed.acidity ~ citric.acid, volatile.acidity ~ citric.acid, sulfates ~ quality. There appeared to be minor variances across quality and bucketed alcohol values but the general trends that were observed during the bi-variate analysis were consistent.
 
 ### Were there any interesting or surprising interactions between features?
 
+For some of the relationships exhibited minor differences when conditioned on bucketed alcohol content and quality by the gross trends remained consistent.
+
 ### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
-------
+A simple linear model was constructed using quality as the dependent variable. The model produced an R-squared value of 0.4 when using all of the variables available. The red wine data set has an extensive profile of physio-chemical measurements but it would seem that since the quality score is human generated and subjective that there are other features that are missing from these data that could improve a predictive model. A linear model might also be too simple to effective decision boundaries. Perhaps another algorithm would perform better.
+
 
 # Final Plots and Summary
 
@@ -577,7 +592,7 @@ ggplot(wine_quality, aes(x = quality, y = alcohol)) +
 ```
 
 ### Description Two
-The alchohol content of a wine seems to have a relationship to its score. Higher alcohol contents tending to product higher scoring wines. If the taste testers were made aware of the alcohol content in the wine they were tasting, this could be a significant source of bias.
+The alcohol content of a wine seems to have a relationship to its score. Higher alcohol contents tending to product higher scoring wines. If the taste testers were made aware of the alcohol content in the wine they were tasting, this could be a significant source of bias.
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
@@ -592,9 +607,9 @@ ggplot(wine_quality, aes(x = quality, y = sulphates, color = alcohol.buckets)) +
         title = element_text(size = 16))
 ```
 
-
 ### Description Three
-This plot illustrates the slight positive relationship between Sulphate content and the wine's quality score. For lower alcohol content wines the relationship is blunted slightly. For the "Medium" and "High" alcohol buckets the relationship is consistent, the slopes are roughly equal with the "High" bucket having slightly lower sulphate measurements.
-------
+This plot illustrates the slight positive relationship between Sulfate content and the wine's quality score. For lower alcohol content wines the relationship is blunted slightly. For the "Medium" and "High" alcohol buckets the relationship is consistent, the slopes are roughly equal with the "High" bucket having slightly lower sulfate measurements.
+
 
 # Reflection
+This project has been a strenuous journey. I have learned much along the way. Many times with this data set I was at a loss what and where to explore. I found that doing domain research helped me get unstuck and find a new perspective of these data that allowed me to keep going. I have a deeper appreciation for the subject and the exploratory analysis process. It might be interesting to find a more extensive data set that includes measurements of additional variables that could help explain the quality scores. I think analysis of economic data and region of origin would allow for deeper exploration of the bias and variance in the quality variable.
